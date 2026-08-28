@@ -1,0 +1,10 @@
+# Stale one-off debugging snapshots from early development (pre-rename,
+# pre-account/customer split) — not source, just ad-hoc captured output.
+debug-businesses.png
+debug-dom.html
+legacy-doc.html
+published-roundtrip.html
+
+# OS / editor cruft
+.DS_Store
+node_modules/
