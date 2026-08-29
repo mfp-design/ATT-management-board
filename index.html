@@ -309,7 +309,13 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
 .biz-card-main { min-width: 0; flex: 1; }
 .biz-card-name { font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 7px; }
 .biz-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; display: inline-block; }
+.biz-card-actions { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .biz-card-grip { flex: 0 0 auto; color: var(--text-muted); padding-top: 2px; }
+.biz-icon-btn {
+  width: 22px; height: 22px; padding: 0; border: none; background: transparent; border-radius: 6px;
+  color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.biz-icon-btn:hover { background: var(--surface-alt); color: var(--text-primary); }
 .biz-card-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 4px; display: flex; gap: 8px; }
 .task-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--border); }
 .task-row:last-child { border-bottom: none; }
@@ -378,7 +384,7 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
 </head>
 <body>
 <div id="app" class="app-shell"></div>
-<script id="app-data" type="application/json">{"businesses":[],"accounts":[],"customers":[],"partners":[],"deals":[],"tasks":[],"updatedAt":null}</script>
+<script id="app-data" type="application/json">{"businesses":[],"accounts":[],"customers":[],"partners":[],"deals":[],"tasks":[],"kpis":[],"ideas":[],"updatedAt":null}</script>
 <script id="app-script">
 /* SFA Tool — app runtime.
  * This file is BOTH the browser app AND, via Node (see build.js), the
@@ -705,7 +711,13 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
 '.biz-card-main { min-width: 0; flex: 1; }',
 '.biz-card-name { font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 7px; }',
 '.biz-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; display: inline-block; }',
+'.biz-card-actions { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; }',
 '.biz-card-grip { flex: 0 0 auto; color: var(--text-muted); padding-top: 2px; }',
+'.biz-icon-btn {',
+'  width: 22px; height: 22px; padding: 0; border: none; background: transparent; border-radius: 6px;',
+'  color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer;',
+'}',
+'.biz-icon-btn:hover { background: var(--surface-alt); color: var(--text-primary); }',
 '.biz-card-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 4px; display: flex; gap: 8px; }',
 '.task-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--border); }',
 '.task-row:last-child { border-bottom: none; }',
@@ -814,7 +826,7 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
   }
 
   function defaultState() {
-    return { businesses: [], accounts: [], customers: [], partners: [], deals: [], tasks: [], updatedAt: null };
+    return { businesses: [], accounts: [], customers: [], partners: [], deals: [], tasks: [], kpis: [], ideas: [], updatedAt: null };
   }
 
   /* Migrate the pre-split shape (a single "customers" array that held
@@ -960,6 +972,7 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
     personFilter: '',
     partnerFilter: '',
     dealFilter: '',
+    ideaFilter: '',
     selectedBusinessId: (state.businesses[0] && state.businesses[0].id) || null,
     taskViewMode: 'byBusiness'
   };
@@ -1007,6 +1020,8 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
   function findBusiness(id) { return state.businesses.find(function (b) { return b.id === id; }); }
   function findDeal(id) { return state.deals.find(function (d) { return d.id === id; }); }
   function findTask(id) { return state.tasks.find(function (t) { return t.id === id; }); }
+  function findKpi(businessId) { return state.kpis.find(function (k) { return k.businessId === businessId; }); }
+  function findIdea(id) { return state.ideas.find(function (i) { return i.id === id; }); }
 
   /* ============================== RENDER =================================== */
   function render() {
@@ -1029,7 +1044,9 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
     customers: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="7" r="2.6"/><path d="M15.5 13.2c2.6.4 4.5 2.6 4.5 5.3"/>',
     partners: '<circle cx="8" cy="8" r="3"/><path d="M8 11c-3 0-5.5 2.3-5.5 5.5V20h11v-3.5C13.5 13.3 11 11 8 11Z"/><circle cx="17" cy="7" r="2.5"/><path d="M14.8 11.3c.7-.3 1.4-.5 2.2-.5 2.8 0 5 2.1 5 4.7V19h-4"/>',
     deals: '<path d="M3 9h18"/><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 14h3"/>',
-    tasks: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 13l2 2 4-4"/>'
+    tasks: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 13l2 2 4-4"/>',
+    kpi: '<path d="M4 20V10"/><path d="M11 20V4"/><path d="M18 20v-7"/><path d="M2 20h20"/>',
+    ideas: '<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a6.5 6.5 0 0 0-3.5 12c.7.5 1 1.2 1 2h5c0-.8.3-1.5 1-2A6.5 6.5 0 0 0 12 2Z"/>'
   };
 
   function renderSidebar() {
@@ -1049,6 +1066,8 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
       navItem('partners', 'パートナー', ICONS.partners) +
       navItem('deals', '案件・商談', ICONS.deals) +
       navItem('businesses', '事業とタスク', ICONS.tasks) +
+      navItem('kpi', 'KPI', ICONS.kpi) +
+      navItem('ideas', 'アイデア', ICONS.ideas) +
       '<div class="sidebar-spacer"></div>' +
       '<div class="sync-box">' + syncRow + '</div>' +
       '</aside>';
@@ -1061,6 +1080,8 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
     else if (ui.tab === 'partners') body = renderPartnersView();
     else if (ui.tab === 'deals') body = renderDealsView();
     else if (ui.tab === 'businesses') body = renderBusinessesView();
+    else if (ui.tab === 'kpi') body = renderKpiView();
+    else if (ui.tab === 'ideas') body = renderIdeasView();
     else body = renderDashboardView();
     return '<div class="main"><div id="modal-root"></div><div id="toast-root" class="toast-stack"></div>' + body + '</div>';
   }
@@ -1326,12 +1347,15 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
       var open = ts.filter(function (t) { return t.status !== 'done'; }).length;
       var overdue = ts.filter(isOverdue).length;
       var active = b.id === ui.selectedBusinessId && ui.taskViewMode === 'byBusiness' ? ' active' : '';
-      var grip = readOnly ? '' : '<div class="biz-card-grip" title="ドラッグして並び替え" aria-hidden="true">' + svgGrip() + '</div>';
+      var actions = '<div class="biz-card-actions">' +
+        (readOnly ? '' : '<button type="button" class="biz-icon-btn" draggable="false" data-action="edit-business" data-id="' + b.id + '" title="編集" aria-label="編集">' + svgEdit() + '</button>') +
+        (readOnly ? '' : '<div class="biz-card-grip" title="ドラッグして並び替え" aria-hidden="true">' + svgGrip() + '</div>') +
+        '</div>';
       return '<div class="biz-card' + active + '"' + (readOnly ? '' : ' draggable="true"') + ' style="border-left:4px solid var(' + businessColorVar(b.name) + ')" data-action="select-business" data-id="' + b.id + '">' +
         '<div class="biz-card-row">' +
         '<div class="biz-card-main"><div class="biz-card-name"><span class="biz-dot" style="background:var(' + businessColorVar(b.name) + ')"></span>' + esc(b.name) + '</div>' +
         '<div class="biz-card-meta"><span>未完了 ' + open + '件</span>' + (overdue ? '<span style="color:var(--danger-text);">超過 ' + overdue + '件</span>' : '') + '</div></div>' +
-        grip +
+        actions +
         '</div></div>';
     }).join('');
 
@@ -1397,6 +1421,76 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
       '<div class="content">' + readOnlyBanner() + '<div class="biz-layout">' + bizPane + taskPane + '</div></div>';
   }
   function statusLabel(k) { for (var i = 0; i < TASK_STATUSES.length; i++) if (TASK_STATUSES[i].key === k) return TASK_STATUSES[i].label; return '未着手'; }
+
+  /* ---------------------------- KPI (事業ごとのコンバージョン率) ---------------------------- */
+  /* rate thresholds are a judgment call, not specified by the user: below 20%
+     is flagged as low (danger), 20-40% as borderline (warning), 40%+ reads as
+     healthy and is shown as plain text so only the weak spots stand out. */
+  function kpiRateHtml(numerator, denominator) {
+    if (!denominator) return '<span class="cell-muted">—</span>';
+    var rate = numerator / denominator;
+    var pct = Math.round(rate * 1000) / 10;
+    var cls = rate < 0.2 ? 'badge-danger' : (rate < 0.4 ? 'badge-warning' : 'badge-muted');
+    return '<span class="badge ' + cls + '">' + pct + '%</span>';
+  }
+
+  function renderKpiView() {
+    var rows = state.businesses.map(function (b) {
+      var k = findKpi(b.id) || { approached: 0, negotiated: 0, won: 0 };
+      return '<tr data-action="edit-kpi" data-id="' + b.id + '">' +
+        '<td class="cell-primary"><span class="biz-dot" style="background:var(' + businessColorVar(b.name) + ');display:inline-block;margin-right:7px;"></span>' + esc(b.name) + '</td>' +
+        '<td class="cell-muted">' + (k.approached || 0) + '人</td>' +
+        '<td class="cell-muted">' + (k.negotiated || 0) + '人</td>' +
+        '<td class="cell-muted">' + (k.won || 0) + '件</td>' +
+        '<td>' + kpiRateHtml(k.negotiated, k.approached) + '</td>' +
+        '<td>' + kpiRateHtml(k.won, k.negotiated) + '</td>' +
+        '<td>' + kpiRateHtml(k.won, k.approached) + '</td>' +
+        '<td><div class="row-actions">' +
+        '<button type="button" class="btn btn-ghost icon-btn" data-action="edit-kpi" data-id="' + b.id + '" title="編集" aria-label="編集">' + svgEdit() + '</button>' +
+        '</div></td></tr>';
+    }).join('');
+
+    var body = state.businesses.length ?
+      '<div class="table-wrap"><table class="data-table"><thead><tr><th>事業名</th><th>アプローチ人数</th><th>商談人数</th><th>成約件数</th><th>商談化率</th><th>成約率</th><th>総合成約率</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' :
+      '<div class="card"><div class="empty"><div class="empty-title">事業がありません</div><div class="empty-sub">「事業とタスク」から事業を追加してください</div></div></div>';
+
+    return '<div class="topbar"><div><div class="page-title">KPI</div><div class="page-sub">事業ごとのアプローチ〜成約のコンバージョン率</div></div></div>' +
+      '<div class="content">' + readOnlyBanner() + body + '</div>';
+  }
+
+  /* ---------------------------- ideas (アイデア) ---------------------------- */
+  function renderIdeasView() {
+    var q = ui.ideaFilter.trim().toLowerCase();
+    var list = state.ideas.filter(function (i) {
+      if (!q) return true;
+      var biz = findBusiness(i.businessId);
+      return ((i.content || '') + ' ' + (biz ? biz.name : '')).toLowerCase().indexOf(q) !== -1;
+    });
+    list = list.slice().sort(function (a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); });
+
+    var rows = list.map(function (i) {
+      var biz = findBusiness(i.businessId);
+      var prBadgeClass = i.priority === 'high' ? 'badge-serious' : (i.priority === 'low' ? 'badge-muted' : 'badge-warning');
+      return '<tr data-action="edit-idea" data-id="' + i.id + '">' +
+        '<td class="cell-muted">' + (biz ? '<span class="biz-dot" style="background:var(' + businessColorVar(biz.name) + ');display:inline-block;margin-right:6px;"></span>' + esc(biz.name) : '<span class="cell-muted">未分類</span>') + '</td>' +
+        '<td class="cell-primary">' + esc(i.content) + '</td>' +
+        '<td><span class="badge ' + prBadgeClass + '">優先度 ' + priorityLabel(i.priority) + '</span></td>' +
+        '<td class="cell-muted">' + (i.createdAt ? fmtDate(i.createdAt.slice(0, 10)) : '—') + '</td>' +
+        '<td><div class="row-actions">' +
+        '<button type="button" class="btn btn-ghost icon-btn" data-action="edit-idea" data-id="' + i.id + '" title="編集" aria-label="編集">' + svgEdit() + '</button>' +
+        '<button type="button" class="btn btn-ghost icon-btn" data-action="delete-idea" data-id="' + i.id + '" title="削除" aria-label="削除">' + svgTrash() + '</button>' +
+        '</div></td></tr>';
+    }).join('');
+
+    var body = list.length ?
+      '<div class="table-wrap"><table class="data-table"><thead><tr><th>事業名</th><th>アイデア内容</th><th>優先順位</th><th>登録日</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' :
+      '<div class="card"><div class="empty"><div class="empty-title">' + (state.ideas.length ? '該当するアイデアがありません' : 'まだアイデアが登録されていません') + '</div><div class="empty-sub">「+ アイデア追加」から追加してください</div></div></div>';
+
+    return '<div class="topbar"><div><div class="page-title">アイデア</div><div class="page-sub">全' + state.ideas.length + '件</div></div>' +
+      '<div class="topbar-actions"><input class="search-input" type="text" placeholder="内容・事業名で検索" value="' + esc(ui.ideaFilter) + '" data-input="idea-filter">' +
+      (readOnly ? '' : '<button type="button" class="btn btn-primary" data-action="open-add-idea">+ アイデア追加</button>') + '</div></div>' +
+      '<div class="content">' + readOnlyBanner() + body + '</div>';
+  }
 
   /* ============================== MODALS ==================================== */
   function openModal(html) {
@@ -1556,6 +1650,34 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
     var foot = (isEdit && !readOnly ? '<button type="button" class="btn btn-danger" data-action="delete-task" data-id="' + t.id + '">削除</button>' : '<span></span>') +
       '<div style="display:flex;gap:8px;"><button type="button" class="btn" data-action="close-modal">キャンセル</button>' + (readOnly ? '' : '<button type="submit" class="btn btn-primary">保存</button>') + '</div>';
     return modalShell(isEdit ? 'タスクを編集' : '新規タスク', body, foot, 'data-form="task" data-id="' + (t.id || '') + '"');
+  }
+
+  function renderKpiForm(biz) {
+    var k = findKpi(biz.id) || {};
+    var body = '<div class="form-grid">' +
+      '<div class="field span-2"><label>事業名</label><input value="' + esc(biz.name) + '" disabled></div>' +
+      '<div class="field"><label>アプローチした人数</label><input name="approached" type="number" min="0" step="1" value="' + (k.approached != null ? k.approached : 0) + '"></div>' +
+      '<div class="field"><label>商談まで進んだ人数</label><input name="negotiated" type="number" min="0" step="1" value="' + (k.negotiated != null ? k.negotiated : 0) + '"></div>' +
+      '<div class="field"><label>成約件数</label><input name="won" type="number" min="0" step="1" value="' + (k.won != null ? k.won : 0) + '"></div>' +
+      '</div>';
+    var foot = '<span></span><div style="display:flex;gap:8px;"><button type="button" class="btn" data-action="close-modal">キャンセル</button>' + (readOnly ? '' : '<button type="submit" class="btn btn-primary">保存</button>') + '</div>';
+    return modalShell('KPIを編集: ' + biz.name, body, foot, 'data-form="kpi" data-id="' + biz.id + '"');
+  }
+
+  function renderIdeaForm(idea) {
+    var isEdit = !!idea;
+    idea = idea || { priority: 'mid' };
+    var bizOptions = state.businesses.map(function (b) { return opt(b.id, b.name, idea.businessId); }).join('');
+    var prOptions = PRIORITIES.map(function (p) { return opt(p.key, p.label, idea.priority); }).join('');
+    var body = '<div class="form-grid">' +
+      '<div class="field"><label>事業名<span class="req">*</span></label><select name="businessId" required' + (state.businesses.length ? '' : ' disabled') + '><option value="">選択してください</option>' + bizOptions + '</select></div>' +
+      '<div class="field"><label>優先順位<span class="req">*</span></label><select name="priority">' + prOptions + '</select></div>' +
+      '<div class="field span-2"><label>アイデア内容<span class="req">*</span></label><textarea name="content" required maxlength="1000">' + esc(idea.content) + '</textarea></div>' +
+      '</div>' +
+      (state.businesses.length ? '' : '<div class="stat-note" style="color:var(--danger-text);">先に事業を追加してください</div>');
+    var foot = (isEdit && !readOnly ? '<button type="button" class="btn btn-danger" data-action="delete-idea" data-id="' + idea.id + '">削除</button>' : '<span></span>') +
+      '<div style="display:flex;gap:8px;"><button type="button" class="btn" data-action="close-modal">キャンセル</button>' + (readOnly ? '' : '<button type="submit" class="btn btn-primary">保存</button>') + '</div>';
+    return modalShell(isEdit ? 'アイデアを編集' : '新規アイデア', body, foot, 'data-form="idea" data-id="' + (idea.id || '') + '"');
   }
 
   function renderConfirmModal(message) {
@@ -1743,6 +1865,8 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
   function doDeleteBusiness(id) {
     state.businesses = state.businesses.filter(function (b) { return b.id !== id; });
     state.tasks = state.tasks.filter(function (t) { return t.businessId !== id; });
+    state.kpis = state.kpis.filter(function (k) { return k.businessId !== id; });
+    state.ideas = state.ideas.filter(function (i) { return i.businessId !== id; });
     state.deals.forEach(function (d) { if (d.businessId === id) d.businessId = null; });
     if (ui.selectedBusinessId === id) ui.selectedBusinessId = (state.businesses[0] && state.businesses[0].id) || null;
     closeModal();
@@ -1792,6 +1916,54 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
 
   function doDeleteTask(id) {
     state.tasks = state.tasks.filter(function (t) { return t.id !== id; });
+    closeModal();
+    persist();
+  }
+
+  function saveKpiForm(form) {
+    var fd = new FormData(form);
+    var businessId = form.dataset.id;
+    if (!businessId || !findBusiness(businessId)) { closeModal(); return; }
+    var data = {
+      businessId: businessId,
+      approached: Math.max(0, Math.round(Number(fd.get('approached')) || 0)),
+      negotiated: Math.max(0, Math.round(Number(fd.get('negotiated')) || 0)),
+      won: Math.max(0, Math.round(Number(fd.get('won')) || 0))
+    };
+    var existing = findKpi(businessId);
+    if (existing) {
+      Object.assign(existing, data);
+    } else {
+      data.id = uid('kpi');
+      state.kpis.push(data);
+    }
+    closeModal();
+    persist();
+  }
+
+  function saveIdeaForm(form) {
+    var fd = new FormData(form);
+    var id = form.dataset.id;
+    var data = {
+      businessId: (fd.get('businessId') || '').toString(),
+      priority: (fd.get('priority') || 'mid').toString(),
+      content: (fd.get('content') || '').toString().trim()
+    };
+    if (!data.businessId || !data.content) return;
+    if (id) {
+      var existing = findIdea(id);
+      if (existing) Object.assign(existing, data);
+    } else {
+      data.id = uid('idea');
+      data.createdAt = new Date().toISOString();
+      state.ideas.push(data);
+    }
+    closeModal();
+    persist();
+  }
+
+  function doDeleteIdea(id) {
+    state.ideas = state.ideas.filter(function (i) { return i.id !== id; });
     closeModal();
     persist();
   }
@@ -1867,7 +2039,7 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
       if (!t) return;
       var action = t.dataset.action;
       var id = t.dataset.id;
-      if (readOnly && ['open-add-account', 'open-add-customer', 'open-add-partner', 'open-add-deal', 'open-add-business', 'open-add-task', 'delete-account', 'delete-customer', 'delete-partner', 'delete-deal', 'delete-business', 'delete-task', 'cycle-task-status'].indexOf(action) !== -1) {
+      if (readOnly && ['open-add-account', 'open-add-customer', 'open-add-partner', 'open-add-deal', 'open-add-business', 'open-add-task', 'open-add-idea', 'delete-account', 'delete-customer', 'delete-partner', 'delete-deal', 'delete-business', 'delete-task', 'delete-idea', 'cycle-task-status'].indexOf(action) !== -1) {
         showToast('閲覧専用のため操作できません', 'warn');
         return;
       }
@@ -1894,6 +2066,10 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
         case 'cycle-task-status': cycleTaskStatus(id); break;
         case 'select-business': ui.selectedBusinessId = id; ui.taskViewMode = 'byBusiness'; render(); break;
         case 'set-task-view': ui.taskViewMode = t.dataset.mode; render(); break;
+        case 'edit-kpi': openModal(renderKpiForm(findBusiness(id))); break;
+        case 'open-add-idea': openModal(renderIdeaForm(null)); break;
+        case 'edit-idea': openModal(renderIdeaForm(findIdea(id))); break;
+        case 'delete-idea': openConfirm('このアイデアを削除しますか？', function () { doDeleteIdea(id); }); break;
         case 'close-modal': closeModal(); render(); break;
         case 'confirm-yes':
           var fn = pendingConfirmAction; pendingConfirmAction = null;
@@ -1915,6 +2091,8 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
       else if (type === 'deal') saveDealForm(form);
       else if (type === 'business') saveBusinessForm(form);
       else if (type === 'task') saveTaskForm(form);
+      else if (type === 'kpi') saveKpiForm(form);
+      else if (type === 'idea') saveIdeaForm(form);
     });
 
     document.addEventListener('input', function (e) {
@@ -1924,6 +2102,7 @@ table.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; mi
       else if (el.dataset.input === 'person-filter') { ui.personFilter = el.value; renderKeepFocus(el); }
       else if (el.dataset.input === 'partner-filter') { ui.partnerFilter = el.value; renderKeepFocus(el); }
       else if (el.dataset.input === 'deal-filter') { ui.dealFilter = el.value; renderKeepFocus(el); }
+      else if (el.dataset.input === 'idea-filter') { ui.ideaFilter = el.value; renderKeepFocus(el); }
       else if (el.dataset.input === 'customer-birthday') {
         /* local modal-only preview — must NOT call the global render(), which
          * would rebuild #modal-root empty and discard the open form */
