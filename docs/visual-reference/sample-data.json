@@ -1,0 +1,268 @@
+{
+  "businesses": [
+    {
+      "id": "b1",
+      "name": "サンプル事業A",
+      "memo": "架空データ・視覚確認専用"
+    },
+    {
+      "id": "b2",
+      "name": "サンプル事業B",
+      "memo": "架空データ・視覚確認専用"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "a1",
+      "name": "架空サンプル企業A",
+      "industry": "サンプル業種",
+      "contact": "担当者A（架空）",
+      "email": "sample@example.com",
+      "memo": "実在しない撮影専用データ"
+    }
+  ],
+  "customers": [
+    {
+      "id": "c1",
+      "name": "サンプル顧客A（架空）",
+      "accountId": "a1",
+      "title": "サンプル職業",
+      "consultant": "担当A（架空）",
+      "email": "sample@example.com",
+      "memo": "撮影専用"
+    }
+  ],
+  "partners": [
+    {
+      "id": "p1",
+      "name": "サンプル協力者A（架空）",
+      "attribute": "士業",
+      "occupation": "サンプル職業",
+      "approachOwner": "担当A（架空）",
+      "nextAction": "サンプル打合せの日程調整"
+    }
+  ],
+  "deals": [
+    {
+      "id": "d0",
+      "title": "架空案件1",
+      "accountId": "a1",
+      "customerId": "c1",
+      "businessId": "b1",
+      "stage": "lead",
+      "amount": 100000,
+      "closeDate": "2026-09-10",
+      "owner": "担当A（架空）",
+      "memo": "金額も架空"
+    },
+    {
+      "id": "d1",
+      "title": "架空案件2",
+      "accountId": "a1",
+      "customerId": "c1",
+      "businessId": "b1",
+      "stage": "approach",
+      "amount": 200000,
+      "closeDate": "2026-09-10",
+      "owner": "担当A（架空）",
+      "memo": "金額も架空"
+    },
+    {
+      "id": "d2",
+      "title": "架空案件3",
+      "accountId": "a1",
+      "customerId": "c1",
+      "businessId": "b1",
+      "stage": "proposal",
+      "amount": 300000,
+      "closeDate": "2026-09-10",
+      "owner": "担当A（架空）",
+      "memo": "金額も架空"
+    },
+    {
+      "id": "d3",
+      "title": "架空案件4",
+      "accountId": "a1",
+      "customerId": "c1",
+      "businessId": "b1",
+      "stage": "negotiation",
+      "amount": 400000,
+      "closeDate": "2026-09-10",
+      "owner": "担当A（架空）",
+      "memo": "金額も架空"
+    },
+    {
+      "id": "d4",
+      "title": "架空案件5",
+      "accountId": "a1",
+      "customerId": "c1",
+      "businessId": "b1",
+      "stage": "won",
+      "amount": 500000,
+      "closeDate": "2026-09-10",
+      "owner": "担当A（架空）",
+      "memo": "金額も架空"
+    },
+    {
+      "id": "d5",
+      "title": "架空案件6",
+      "accountId": "a1",
+      "customerId": "c1",
+      "businessId": "b1",
+      "stage": "lost",
+      "amount": 600000,
+      "closeDate": "2026-09-10",
+      "owner": "担当A（架空）",
+      "memo": "金額も架空"
+    },
+    {
+      "id": "h41",
+      "title": "架空実績4-1",
+      "accountId": "a1",
+      "businessId": "b1",
+      "stage": "won",
+      "amount": 80000,
+      "closeDate": "2026-04-15"
+    },
+    {
+      "id": "h42",
+      "title": "架空実績4-2",
+      "accountId": "a1",
+      "businessId": "b2",
+      "stage": "won",
+      "amount": 160000,
+      "closeDate": "2026-04-15"
+    },
+    {
+      "id": "h51",
+      "title": "架空実績5-1",
+      "accountId": "a1",
+      "businessId": "b1",
+      "stage": "won",
+      "amount": 100000,
+      "closeDate": "2026-05-15"
+    },
+    {
+      "id": "h52",
+      "title": "架空実績5-2",
+      "accountId": "a1",
+      "businessId": "b2",
+      "stage": "won",
+      "amount": 200000,
+      "closeDate": "2026-05-15"
+    },
+    {
+      "id": "h61",
+      "title": "架空実績6-1",
+      "accountId": "a1",
+      "businessId": "b1",
+      "stage": "won",
+      "amount": 120000,
+      "closeDate": "2026-06-15"
+    },
+    {
+      "id": "h62",
+      "title": "架空実績6-2",
+      "accountId": "a1",
+      "businessId": "b2",
+      "stage": "won",
+      "amount": 240000,
+      "closeDate": "2026-06-15"
+    },
+    {
+      "id": "h71",
+      "title": "架空実績7-1",
+      "accountId": "a1",
+      "businessId": "b1",
+      "stage": "won",
+      "amount": 140000,
+      "closeDate": "2026-07-15"
+    },
+    {
+      "id": "h72",
+      "title": "架空実績7-2",
+      "accountId": "a1",
+      "businessId": "b2",
+      "stage": "won",
+      "amount": 280000,
+      "closeDate": "2026-07-15"
+    },
+    {
+      "id": "h81",
+      "title": "架空実績8-1",
+      "accountId": "a1",
+      "businessId": "b1",
+      "stage": "won",
+      "amount": 160000,
+      "closeDate": "2026-08-15"
+    },
+    {
+      "id": "h82",
+      "title": "架空実績8-2",
+      "accountId": "a1",
+      "businessId": "b2",
+      "stage": "won",
+      "amount": 320000,
+      "closeDate": "2026-08-15"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t0",
+      "title": "架空の見積確認",
+      "businessId": "b1",
+      "dealId": "d2",
+      "assignee": "担当A（架空）",
+      "dueDate": "2026-09-05",
+      "priority": "high",
+      "status": "todo",
+      "memo": "撮影用の架空タスク"
+    },
+    {
+      "id": "t1",
+      "title": "架空の資料作成",
+      "businessId": "b1",
+      "dealId": "d2",
+      "assignee": "担当A（架空）",
+      "dueDate": "2026-09-10",
+      "priority": "mid",
+      "status": "doing",
+      "memo": "撮影用の架空タスク"
+    },
+    {
+      "id": "t2",
+      "title": "架空の打合せ記録",
+      "businessId": "b1",
+      "dealId": "d2",
+      "assignee": "担当A（架空）",
+      "dueDate": "2026-09-15",
+      "priority": "low",
+      "status": "done",
+      "memo": "撮影用の架空タスク"
+    }
+  ],
+  "kpis": [
+    {
+      "businessId": "b1",
+      "approached": 100,
+      "negotiated": 30,
+      "won": 5
+    },
+    {
+      "businessId": "b2",
+      "approached": 50,
+      "negotiated": 25,
+      "won": 15
+    }
+  ],
+  "ideas": [
+    {
+      "id": "i1",
+      "businessId": "b1",
+      "content": "架空の提案：月次報告テンプレートを整備する",
+      "priority": "high",
+      "createdAt": "2026-09-07T00:00:00Z"
+    }
+  ],
+  "updatedAt": "2026-09-07T00:00:00Z"
+}
