@@ -23,8 +23,23 @@ def period(v):
 
 def previous(v):
     start, end = map(date.fromisoformat, v['period'])
-    days = (end - start).days + 1
-    return [(start - timedelta(days=days)).isoformat(), (start - timedelta(days=1)).isoformat()]
+    if v['kind'] == 'month':
+        assert start.day == 1 and end == date(start.year, start.month, calendar.monthrange(start.year, start.month)[1])
+        y, m = month_shift(start.year, start.month, -1)
+        return [date(y, m, 1).isoformat(), date(y, m, calendar.monthrange(y, m)[1]).isoformat()]
+    if v['kind'] == 'ten_days':
+        assert start.year == end.year and start.month == end.month
+        assert (start.day, end.day) in [(1, 10), (11, 20), (21, calendar.monthrange(start.year, start.month)[1])]
+        if start.day == 1:
+            y, m = month_shift(start.year, start.month, -1)
+            lo, hi = date(y, m, 21), date(y, m, calendar.monthrange(y, m)[1])
+        elif start.day == 11:
+            lo, hi = start.replace(day=1), start.replace(day=10)
+        else:
+            lo, hi = start.replace(day=11), start.replace(day=20)
+        return [lo.isoformat(), hi.isoformat()]
+    raise ValueError('This reference check covers monthly and ten-day comparisons only')
+
 
 def actual_sum(rows, kind, start, end):
     # IDs identify one canonical record, irrespective of retry/JOIN duplication.
