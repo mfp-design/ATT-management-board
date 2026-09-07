@@ -1,0 +1,2010 @@
+{
+  "baseline": "9f20c84",
+  "data": "synthetic only",
+  "cases": [
+    {
+      "id": "C01",
+      "name": "2026-09 区分1",
+      "operation": "period",
+      "requirement": "7.1",
+      "input": {
+        "month": "2026-09",
+        "part": 1,
+        "kind": "ten_days"
+      },
+      "expected": [
+        "2026-09-01",
+        "2026-09-10"
+      ]
+    },
+    {
+      "id": "C02",
+      "name": "2026-09 区分2",
+      "operation": "period",
+      "requirement": "7.1",
+      "input": {
+        "month": "2026-09",
+        "part": 2,
+        "kind": "ten_days"
+      },
+      "expected": [
+        "2026-09-11",
+        "2026-09-20"
+      ]
+    },
+    {
+      "id": "C03",
+      "name": "2026-09 区分3",
+      "operation": "period",
+      "requirement": "7.1",
+      "input": {
+        "month": "2026-09",
+        "part": 3,
+        "kind": "ten_days"
+      },
+      "expected": [
+        "2026-09-21",
+        "2026-09-30"
+      ]
+    },
+    {
+      "id": "C04",
+      "name": "2026-02 区分3",
+      "operation": "period",
+      "requirement": "7.1",
+      "input": {
+        "month": "2026-02",
+        "part": 3,
+        "kind": "ten_days"
+      },
+      "expected": [
+        "2026-02-21",
+        "2026-02-28"
+      ]
+    },
+    {
+      "id": "C05",
+      "name": "2028-02 区分3",
+      "operation": "period",
+      "requirement": "7.1",
+      "input": {
+        "month": "2028-02",
+        "part": 3,
+        "kind": "ten_days"
+      },
+      "expected": [
+        "2028-02-21",
+        "2028-02-29"
+      ]
+    },
+    {
+      "id": "C06",
+      "name": "2026-08 区分3",
+      "operation": "period",
+      "requirement": "7.1",
+      "input": {
+        "month": "2026-08",
+        "part": 3,
+        "kind": "ten_days"
+      },
+      "expected": [
+        "2026-08-21",
+        "2026-08-31"
+      ]
+    },
+    {
+      "id": "C07",
+      "name": "1か月",
+      "operation": "period",
+      "requirement": "7.1",
+      "input": {
+        "month": "2026-09",
+        "months": 1,
+        "kind": "months"
+      },
+      "expected": [
+        "2026-09-01",
+        "2026-09-30"
+      ]
+    },
+    {
+      "id": "C08",
+      "name": "3か月",
+      "operation": "period",
+      "requirement": "7.1",
+      "input": {
+        "month": "2026-09",
+        "months": 3,
+        "kind": "months"
+      },
+      "expected": [
+        "2026-07-01",
+        "2026-09-30"
+      ]
+    },
+    {
+      "id": "C09",
+      "name": "6か月",
+      "operation": "period",
+      "requirement": "7.1",
+      "input": {
+        "month": "2026-09",
+        "months": 6,
+        "kind": "months"
+      },
+      "expected": [
+        "2026-04-01",
+        "2026-09-30"
+      ]
+    },
+    {
+      "id": "C10",
+      "name": "同日数の直前期間 2026-09-01",
+      "operation": "previous",
+      "requirement": "7.1 / 補足案F",
+      "input": {
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": [
+        "2026-08-02",
+        "2026-08-31"
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "同日数の直前期間 2026-08-21",
+      "operation": "previous",
+      "requirement": "7.1 / 補足案F",
+      "input": {
+        "period": [
+          "2026-08-21",
+          "2026-08-31"
+        ]
+      },
+      "expected": [
+        "2026-08-10",
+        "2026-08-20"
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "同日数の直前期間 2026-03-01",
+      "operation": "previous",
+      "requirement": "7.1 / 補足案F",
+      "input": {
+        "period": [
+          "2026-03-01",
+          "2026-03-31"
+        ]
+      },
+      "expected": [
+        "2026-01-29",
+        "2026-02-28"
+      ]
+    },
+    {
+      "id": "C13",
+      "name": "JST月境界 2026-08-31T14:59:59+00:00",
+      "operation": "jst_date",
+      "requirement": "8.1",
+      "input": "2026-08-31T14:59:59+00:00",
+      "expected": "2026-08-31"
+    },
+    {
+      "id": "C14",
+      "name": "JST月境界 2026-08-31T15:00:00+00:00",
+      "operation": "jst_date",
+      "requirement": "8.1",
+      "input": "2026-08-31T15:00:00+00:00",
+      "expected": "2026-09-01"
+    },
+    {
+      "id": "C15",
+      "name": "年度移行 2026-09-30",
+      "operation": "fiscal",
+      "requirement": "7.1",
+      "input": {
+        "years": [
+          {
+            "id": "FY1",
+            "start": "2025-10-01",
+            "end": "2026-09-30"
+          },
+          {
+            "id": "transition",
+            "start": "2026-10-01",
+            "end": "2027-03-31"
+          },
+          {
+            "id": "FY2",
+            "start": "2027-04-01",
+            "end": "2028-03-31"
+          }
+        ],
+        "date": "2026-09-30"
+      },
+      "expected": {
+        "contiguous": true,
+        "year": "FY1"
+      }
+    },
+    {
+      "id": "C16",
+      "name": "年度移行 2026-10-01",
+      "operation": "fiscal",
+      "requirement": "7.1",
+      "input": {
+        "years": [
+          {
+            "id": "FY1",
+            "start": "2025-10-01",
+            "end": "2026-09-30"
+          },
+          {
+            "id": "transition",
+            "start": "2026-10-01",
+            "end": "2027-03-31"
+          },
+          {
+            "id": "FY2",
+            "start": "2027-04-01",
+            "end": "2028-03-31"
+          }
+        ],
+        "date": "2026-10-01"
+      },
+      "expected": {
+        "contiguous": true,
+        "year": "transition"
+      }
+    },
+    {
+      "id": "C17",
+      "name": "年度移行 2027-04-01",
+      "operation": "fiscal",
+      "requirement": "7.1",
+      "input": {
+        "years": [
+          {
+            "id": "FY1",
+            "start": "2025-10-01",
+            "end": "2026-09-30"
+          },
+          {
+            "id": "transition",
+            "start": "2026-10-01",
+            "end": "2027-03-31"
+          },
+          {
+            "id": "FY2",
+            "start": "2027-04-01",
+            "end": "2028-03-31"
+          }
+        ],
+        "date": "2027-04-01"
+      },
+      "expected": {
+        "contiguous": true,
+        "year": "FY2"
+      }
+    },
+    {
+      "id": "C18",
+      "name": "月跨ぎの実績と残高",
+      "operation": "ledger",
+      "requirement": "7.1、7.4 / 補足案A",
+      "input": {
+        "rows": [
+          {
+            "id": "s1",
+            "kind": "sale",
+            "date": "2026-08-20",
+            "amount": 100000
+          },
+          {
+            "id": "i1",
+            "kind": "invoice",
+            "date": "2026-08-25",
+            "amount": 60000
+          },
+          {
+            "id": "r1",
+            "kind": "receipt",
+            "date": "2026-09-05",
+            "amount": 40000
+          },
+          {
+            "id": "p1",
+            "kind": "receipt",
+            "date": "2026-09-05",
+            "amount": 60000,
+            "actual": false
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "sale": 0,
+        "invoice": 0,
+        "receipt": 40000,
+        "unbilled": 40000,
+        "unpaid": 20000
+      }
+    },
+    {
+      "id": "C19",
+      "name": "同一実績IDの重複を排除",
+      "operation": "ledger",
+      "requirement": "7.4、8.1",
+      "input": {
+        "rows": [
+          {
+            "id": "s1",
+            "kind": "sale",
+            "date": "2026-08-20",
+            "amount": 100000
+          },
+          {
+            "id": "i1",
+            "kind": "invoice",
+            "date": "2026-08-25",
+            "amount": 60000
+          },
+          {
+            "id": "r1",
+            "kind": "receipt",
+            "date": "2026-09-05",
+            "amount": 40000
+          },
+          {
+            "id": "p1",
+            "kind": "receipt",
+            "date": "2026-09-05",
+            "amount": 60000,
+            "actual": false
+          },
+          {
+            "id": "r1",
+            "kind": "receipt",
+            "date": "2026-09-05",
+            "amount": 40000
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "sale": 0,
+        "invoice": 0,
+        "receipt": 40000,
+        "unbilled": 40000,
+        "unpaid": 20000
+      }
+    },
+    {
+      "id": "C20",
+      "name": "案件段階 negotiation 未計上",
+      "operation": "forecast",
+      "requirement": "7.1、7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "negotiation",
+            "amount": 100000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000
+              }
+            ]
+          }
+        ],
+        "sales": [],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 100000,
+        "sales": 0,
+        "landing": 100000,
+        "ids": [
+          "d1"
+        ]
+      }
+    },
+    {
+      "id": "C21",
+      "name": "案件段階 won 未計上",
+      "operation": "forecast",
+      "requirement": "7.1、7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "won",
+            "amount": 100000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000
+              }
+            ]
+          }
+        ],
+        "sales": [],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 0,
+        "sales": 0,
+        "landing": 0,
+        "ids": [
+          "d1"
+        ]
+      }
+    },
+    {
+      "id": "C22",
+      "name": "案件段階 won 計上済",
+      "operation": "forecast",
+      "requirement": "7.1、7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "won",
+            "amount": 100000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000
+              }
+            ]
+          }
+        ],
+        "sales": [
+          {
+            "id": "s1",
+            "deal": "d1",
+            "kind": "sale",
+            "date": "2026-09-20",
+            "amount": 100000
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 0,
+        "sales": 100000,
+        "landing": 100000,
+        "ids": [
+          "d1"
+        ]
+      }
+    },
+    {
+      "id": "C23",
+      "name": "案件段階 lost 未計上",
+      "operation": "forecast",
+      "requirement": "7.1、7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "lost",
+            "amount": 100000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000
+              }
+            ]
+          }
+        ],
+        "sales": [],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 0,
+        "sales": 0,
+        "landing": 0,
+        "ids": [
+          "d1"
+        ]
+      }
+    },
+    {
+      "id": "C24",
+      "name": "共同担当重複排除と過去属性復元",
+      "operation": "forecast",
+      "requirement": "7.1、8.1",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "negotiation",
+            "amount": 100000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000
+              }
+            ]
+          },
+          {
+            "id": "d1",
+            "at": "2026-10-01",
+            "business": "B",
+            "owners": [
+              "m3"
+            ],
+            "stage": "won",
+            "amount": 200000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000
+              }
+            ]
+          }
+        ],
+        "members": [
+          "m1",
+          "m2"
+        ],
+        "business": "A",
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 100000,
+        "sales": 0,
+        "landing": 100000,
+        "ids": [
+          "d1"
+        ]
+      }
+    },
+    {
+      "id": "C25",
+      "name": "部分成約を分割・元案件を二重計上しない",
+      "operation": "forecast",
+      "requirement": "7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "original",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "negotiation",
+            "amount": 300000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000
+              }
+            ],
+            "cancelled": true
+          },
+          {
+            "id": "won-part",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "won",
+            "amount": 100000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000
+              }
+            ]
+          },
+          {
+            "id": "ongoing-part",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "negotiation",
+            "amount": 200000,
+            "plans": [
+              {
+                "date": "2026-09-25",
+                "amount": 200000
+              }
+            ]
+          }
+        ],
+        "sales": [
+          {
+            "id": "s1",
+            "deal": "won-part",
+            "kind": "sale",
+            "date": "2026-09-20",
+            "amount": 100000
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 2,
+        "amount": 300000,
+        "forecast": 200000,
+        "sales": 100000,
+        "landing": 300000,
+        "ids": [
+          "ongoing-part",
+          "won-part"
+        ]
+      }
+    },
+    {
+      "id": "C26",
+      "name": "未分類経費 分類前",
+      "operation": "profit",
+      "requirement": "7.5",
+      "input": {
+        "sales": {
+          "A": 200000,
+          "B": 100000
+        },
+        "expenses": [
+          {
+            "id": "e1",
+            "target": "A",
+            "amount": 30000
+          },
+          {
+            "id": "e2",
+            "target": "B",
+            "amount": 20000
+          },
+          {
+            "id": "e3",
+            "target": "common",
+            "amount": 10000,
+            "review": true
+          },
+          {
+            "id": "e4",
+            "target": "unclassified",
+            "amount": 5000
+          }
+        ],
+        "labor": 80000
+      },
+      "expected": {
+        "business_profit": {
+          "A": 170000,
+          "B": 80000
+        },
+        "common": 10000,
+        "unclassified": 5000,
+        "expense_total": 65000,
+        "company_profit": 155000,
+        "review": 10000
+      }
+    },
+    {
+      "id": "C27",
+      "name": "未分類経費 分類後",
+      "operation": "profit",
+      "requirement": "7.5",
+      "input": {
+        "sales": {
+          "A": 200000,
+          "B": 100000
+        },
+        "expenses": [
+          {
+            "id": "e1",
+            "target": "A",
+            "amount": 30000
+          },
+          {
+            "id": "e2",
+            "target": "B",
+            "amount": 20000
+          },
+          {
+            "id": "e3",
+            "target": "common",
+            "amount": 10000,
+            "review": true
+          },
+          {
+            "id": "e4",
+            "target": "A",
+            "amount": 5000
+          }
+        ],
+        "labor": 80000
+      },
+      "expected": {
+        "business_profit": {
+          "A": 165000,
+          "B": 80000
+        },
+        "common": 10000,
+        "unclassified": 0,
+        "expense_total": 65000,
+        "company_profit": 155000,
+        "review": 10000
+      }
+    },
+    {
+      "id": "C28",
+      "name": "請求上限一致",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "invoice",
+        "sales": 100000,
+        "existing": 60000,
+        "add": 40000
+      },
+      "expected": true
+    },
+    {
+      "id": "C29",
+      "name": "請求上限1円超過",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "invoice",
+        "sales": 100000,
+        "existing": 60000,
+        "add": 40001
+      },
+      "expected": false
+    },
+    {
+      "id": "C30",
+      "name": "入金上限一致",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "receipt",
+        "invoiced": 60000,
+        "existing": 40000,
+        "add": 20000
+      },
+      "expected": true
+    },
+    {
+      "id": "C31",
+      "name": "入金上限1円超過",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "receipt",
+        "invoiced": 60000,
+        "existing": 40000,
+        "add": 20001
+      },
+      "expected": false
+    },
+    {
+      "id": "C32",
+      "name": "分割予定合計一致",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "plan_total",
+        "sales": 100000,
+        "invoices": [
+          40000,
+          60000
+        ],
+        "receipts": [
+          20000,
+          80000
+        ]
+      },
+      "expected": true
+    },
+    {
+      "id": "C33",
+      "name": "予定合計不一致",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "plan_total",
+        "sales": 100000,
+        "invoices": [
+          40000,
+          50000
+        ],
+        "receipts": [
+          100000
+        ]
+      },
+      "expected": false
+    },
+    {
+      "id": "C34",
+      "name": "実績前の選択変更",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "change_mode",
+        "has_actual": false,
+        "confirmed": true
+      },
+      "expected": true
+    },
+    {
+      "id": "C35",
+      "name": "確認なしの選択変更",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "change_mode",
+        "has_actual": false,
+        "confirmed": false
+      },
+      "expected": false
+    },
+    {
+      "id": "C36",
+      "name": "実績後の直接変更",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "change_mode",
+        "has_actual": true,
+        "confirmed": true
+      },
+      "expected": false
+    },
+    {
+      "id": "C37",
+      "name": "成約時予定なし",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "won",
+        "amount": 100000,
+        "plans": []
+      },
+      "expected": {
+        "allowed": true,
+        "created": [
+          100000
+        ],
+        "gap": 0
+      }
+    },
+    {
+      "id": "C38",
+      "name": "成約時既存予定一致",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "won",
+        "amount": 100000,
+        "plans": [
+          40000,
+          60000
+        ]
+      },
+      "expected": {
+        "allowed": true,
+        "created": [],
+        "gap": 0
+      }
+    },
+    {
+      "id": "C39",
+      "name": "案件増額で予定を変更しない",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "won",
+        "amount": 120000,
+        "plans": [
+          40000,
+          60000
+        ]
+      },
+      "expected": {
+        "allowed": false,
+        "created": [],
+        "gap": 20000
+      }
+    },
+    {
+      "id": "C40",
+      "name": "理由なし再開拒否",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "reopen",
+        "reason": " "
+      },
+      "expected": false
+    },
+    {
+      "id": "C41",
+      "name": "理由付き再開",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "reopen",
+        "reason": "架空の再開理由"
+      },
+      "expected": true
+    },
+    {
+      "id": "C42",
+      "name": "実績付き失注拒否",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "lost",
+        "active_sales": true
+      },
+      "expected": false
+    },
+    {
+      "id": "C43",
+      "name": "案件と売上の事業不一致",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "same_business",
+        "deal_business": "A",
+        "sale_business": "B"
+      },
+      "expected": false
+    },
+    {
+      "id": "C44",
+      "name": "小数円拒否",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "yen",
+        "amount": 1.5,
+        "currency": "JPY"
+      },
+      "expected": false
+    },
+    {
+      "id": "C45",
+      "name": "外貨拒否",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "yen",
+        "amount": 100,
+        "currency": "USD"
+      },
+      "expected": false
+    },
+    {
+      "id": "C46",
+      "name": "整数円",
+      "operation": "guard",
+      "requirement": "7.3、7.4、8.1",
+      "input": {
+        "action": "yen",
+        "amount": 100001,
+        "currency": "JPY"
+      },
+      "expected": true
+    },
+    {
+      "id": "C47",
+      "name": "通常返金の反映月",
+      "operation": "adjust",
+      "requirement": "7.5、7.6",
+      "input": {
+        "rows": [
+          {
+            "id": "e1",
+            "kind": "expense",
+            "date": "2026-08-20",
+            "amount": 10000
+          }
+        ],
+        "effective": "2026-09-05",
+        "delta": -10000,
+        "months": [
+          "2026-08",
+          "2026-09"
+        ]
+      },
+      "expected": {
+        "2026-08": 10000,
+        "2026-09": -10000
+      }
+    },
+    {
+      "id": "C48",
+      "name": "入力誤り訂正の反映月",
+      "operation": "adjust",
+      "requirement": "7.5、7.6",
+      "input": {
+        "rows": [
+          {
+            "id": "e1",
+            "kind": "expense",
+            "date": "2026-08-20",
+            "amount": 10000
+          }
+        ],
+        "effective": "2026-08-20",
+        "delta": -2000,
+        "months": [
+          "2026-08",
+          "2026-09"
+        ]
+      },
+      "expected": {
+        "2026-08": 8000,
+        "2026-09": 0
+      }
+    },
+    {
+      "id": "C49",
+      "name": "締め executive 照合True 確認待0 未分類0",
+      "operation": "guard",
+      "requirement": "7.6",
+      "input": {
+        "action": "close",
+        "role": "executive",
+        "reconciled": true,
+        "pending": 0,
+        "unclassified": 0
+      },
+      "expected": true
+    },
+    {
+      "id": "C50",
+      "name": "締め admin 照合True 確認待0 未分類0",
+      "operation": "guard",
+      "requirement": "7.6",
+      "input": {
+        "action": "close",
+        "role": "admin",
+        "reconciled": true,
+        "pending": 0,
+        "unclassified": 0
+      },
+      "expected": false
+    },
+    {
+      "id": "C51",
+      "name": "締め executive 照合False 確認待0 未分類0",
+      "operation": "guard",
+      "requirement": "7.6",
+      "input": {
+        "action": "close",
+        "role": "executive",
+        "reconciled": false,
+        "pending": 0,
+        "unclassified": 0
+      },
+      "expected": false
+    },
+    {
+      "id": "C52",
+      "name": "締め executive 照合True 確認待1 未分類0",
+      "operation": "guard",
+      "requirement": "7.6",
+      "input": {
+        "action": "close",
+        "role": "executive",
+        "reconciled": true,
+        "pending": 1,
+        "unclassified": 0
+      },
+      "expected": false
+    },
+    {
+      "id": "C53",
+      "name": "締め executive 照合True 確認待0 未分類1",
+      "operation": "guard",
+      "requirement": "7.6",
+      "input": {
+        "action": "close",
+        "role": "executive",
+        "reconciled": true,
+        "pending": 0,
+        "unclassified": 1
+      },
+      "expected": false
+    },
+    {
+      "id": "C54",
+      "name": "締め後通常編集拒否",
+      "operation": "guard",
+      "requirement": "7.6",
+      "input": {
+        "action": "edit_closed"
+      },
+      "expected": false
+    },
+    {
+      "id": "C55",
+      "name": "遅着で対象月を再締め待ち",
+      "operation": "late",
+      "requirement": "7.6",
+      "input": {
+        "sales": 100000,
+        "old_expense": 10000,
+        "late_expense": 5000,
+        "use_date": "2026-08-31",
+        "received": "2026-09-07"
+      },
+      "expected": {
+        "old_profit": 90000,
+        "current_profit": 85000,
+        "state": "reclose_pending",
+        "expense_month": "2026-08",
+        "old_version_preserved": true
+      }
+    },
+    {
+      "id": "C56",
+      "name": "締め目標日超過でも入力継続",
+      "operation": "deadline",
+      "requirement": "7.6",
+      "input": {
+        "today": "2026-09-11",
+        "target": "2026-09-10"
+      },
+      "expected": {
+        "overdue": true,
+        "auto_close": false,
+        "auto_stop": false
+      }
+    },
+    {
+      "id": "C57",
+      "name": "四予算・最新値だけ・差額符号",
+      "operation": "budgets",
+      "requirement": "7.5",
+      "input": {
+        "months": [
+          "2026-09"
+        ],
+        "rows": [
+          {
+            "month": "2026-09",
+            "kind": "sales",
+            "amount": 300000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "business_expense",
+            "amount": 50000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "common",
+            "amount": 10000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "labor",
+            "amount": 80000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "sales",
+            "amount": 320000,
+            "version": 2
+          }
+        ],
+        "actual": {
+          "sales": 300000,
+          "business_expense": 55000,
+          "common": 10000,
+          "labor": 80000
+        }
+      },
+      "expected": {
+        "values": {
+          "sales": 320000,
+          "business_expense": 50000,
+          "common": 10000,
+          "labor": 80000
+        },
+        "mode": "period_budget",
+        "variance": {
+          "sales": -20000,
+          "business_expense": 5000,
+          "common": 0,
+          "labor": 0
+        }
+      }
+    },
+    {
+      "id": "C58",
+      "name": "10日毎の予算は月次参考",
+      "operation": "budgets",
+      "requirement": "補足案C",
+      "input": {
+        "months": [
+          "2026-09"
+        ],
+        "rows": [
+          {
+            "month": "2026-09",
+            "kind": "sales",
+            "amount": 300000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "business_expense",
+            "amount": 50000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "common",
+            "amount": 10000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "labor",
+            "amount": 80000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "sales",
+            "amount": 320000,
+            "version": 2
+          }
+        ],
+        "actual": {
+          "sales": 300000,
+          "business_expense": 55000,
+          "common": 10000,
+          "labor": 80000
+        },
+        "partial": true
+      },
+      "expected": {
+        "values": {
+          "sales": 320000,
+          "business_expense": 50000,
+          "common": 10000,
+          "labor": 80000
+        },
+        "mode": "monthly_reference",
+        "variance": null
+      }
+    },
+    {
+      "id": "C59",
+      "name": "メンバー絞込時に予算を按分しない",
+      "operation": "budgets",
+      "requirement": "補足案D",
+      "input": {
+        "months": [
+          "2026-09"
+        ],
+        "rows": [
+          {
+            "month": "2026-09",
+            "kind": "sales",
+            "amount": 300000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "business_expense",
+            "amount": 50000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "common",
+            "amount": 10000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "labor",
+            "amount": 80000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "sales",
+            "amount": 320000,
+            "version": 2
+          }
+        ],
+        "actual": {
+          "sales": 300000,
+          "business_expense": 55000,
+          "common": 10000,
+          "labor": 80000
+        },
+        "member": "m1"
+      },
+      "expected": {
+        "values": null,
+        "reason": "filter_not_applicable"
+      }
+    },
+    {
+      "id": "C60",
+      "name": "予算欠損を0にしない",
+      "operation": "budgets",
+      "requirement": "補足案C",
+      "input": {
+        "months": [
+          "2026-08",
+          "2026-09"
+        ],
+        "rows": [
+          {
+            "month": "2026-09",
+            "kind": "sales",
+            "amount": 300000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "business_expense",
+            "amount": 50000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "common",
+            "amount": 10000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "labor",
+            "amount": 80000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "sales",
+            "amount": 320000,
+            "version": 2
+          }
+        ],
+        "actual": {
+          "sales": 300000,
+          "business_expense": 55000,
+          "common": 10000,
+          "labor": 80000
+        }
+      },
+      "expected": {
+        "values": {
+          "sales": null,
+          "business_expense": null,
+          "common": null,
+          "labor": null
+        },
+        "mode": "period_budget",
+        "variance": {
+          "sales": null,
+          "business_expense": null,
+          "common": null,
+          "labor": null
+        }
+      }
+    },
+    {
+      "id": "C61",
+      "name": "権限 executive 2026-09-07T10:00:00Z",
+      "operation": "access",
+      "requirement": "5.3、7.2、7.12",
+      "input": {
+        "role": "executive",
+        "production": true,
+        "active": true,
+        "now": "2026-09-07T10:00:00Z",
+        "revoked": false,
+        "grant_start": "2026-09-07T09:00:00Z",
+        "grant_end": "2026-09-08T09:00:00Z"
+      },
+      "expected": [
+        "sales",
+        "expenses",
+        "common",
+        "budget",
+        "profit",
+        "labor",
+        "comments"
+      ]
+    },
+    {
+      "id": "C62",
+      "name": "権限 admin 2026-09-07T10:00:00Z",
+      "operation": "access",
+      "requirement": "5.3、7.2、7.12",
+      "input": {
+        "role": "admin",
+        "production": true,
+        "active": true,
+        "now": "2026-09-07T10:00:00Z",
+        "revoked": false,
+        "grant_start": "2026-09-07T09:00:00Z",
+        "grant_end": "2026-09-08T09:00:00Z"
+      },
+      "expected": [
+        "sales",
+        "expenses",
+        "common"
+      ]
+    },
+    {
+      "id": "C63",
+      "name": "権限 system 2026-09-07T10:00:00Z",
+      "operation": "access",
+      "requirement": "5.3、7.2、7.12",
+      "input": {
+        "role": "system",
+        "production": true,
+        "active": true,
+        "now": "2026-09-07T10:00:00Z",
+        "revoked": false,
+        "grant_start": "2026-09-07T09:00:00Z",
+        "grant_end": "2026-09-08T09:00:00Z"
+      },
+      "expected": [
+        "sales",
+        "expenses",
+        "common",
+        "budget",
+        "profit",
+        "labor"
+      ]
+    },
+    {
+      "id": "C64",
+      "name": "権限 system 2026-09-08T09:00:00Z",
+      "operation": "access",
+      "requirement": "5.3、7.2、7.12",
+      "input": {
+        "role": "system",
+        "production": true,
+        "active": true,
+        "now": "2026-09-08T09:00:00Z",
+        "revoked": false,
+        "grant_start": "2026-09-07T09:00:00Z",
+        "grant_end": "2026-09-08T09:00:00Z"
+      },
+      "expected": []
+    },
+    {
+      "id": "C65",
+      "name": "権限 system 2026-09-07T10:00:00Z取消",
+      "operation": "access",
+      "requirement": "5.3、7.2、7.12",
+      "input": {
+        "role": "system",
+        "production": true,
+        "active": true,
+        "now": "2026-09-07T10:00:00Z",
+        "revoked": true,
+        "grant_start": "2026-09-07T09:00:00Z",
+        "grant_end": "2026-09-08T09:00:00Z"
+      },
+      "expected": []
+    },
+    {
+      "id": "C66",
+      "name": "アクション重なり・未定・完了中止",
+      "operation": "next_actions",
+      "requirement": "7.8 / 補足案E",
+      "input": {
+        "rows": [
+          {
+            "id": "a1",
+            "kind": "date",
+            "end": "2026-09-10",
+            "status": "todo"
+          },
+          {
+            "id": "a2",
+            "kind": "range",
+            "start": "2026-08-31",
+            "end": "2026-09-02",
+            "status": "todo"
+          },
+          {
+            "id": "a3",
+            "kind": "date",
+            "end": "2026-09-11",
+            "status": "todo"
+          },
+          {
+            "id": "a4",
+            "kind": "undated",
+            "status": "todo"
+          },
+          {
+            "id": "a5",
+            "kind": "date",
+            "end": "2026-09-05",
+            "status": "done"
+          },
+          {
+            "id": "a6",
+            "kind": "date",
+            "end": "2026-09-05",
+            "status": "cancelled"
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-10"
+        ],
+        "today": "2026-09-11"
+      },
+      "expected": {
+        "selected": [
+          "a1",
+          "a2",
+          "a5",
+          "a6"
+        ],
+        "undated": [
+          "a4"
+        ],
+        "overdue": [
+          "a1",
+          "a2"
+        ]
+      }
+    },
+    {
+      "id": "C67",
+      "name": "5種類の案件変化・イベント重複排除",
+      "operation": "events",
+      "requirement": "7.1",
+      "input": {
+        "rows": [
+          {
+            "id": "e1",
+            "date": "2026-09-01",
+            "categories": [
+              "new"
+            ]
+          },
+          {
+            "id": "e2",
+            "date": "2026-09-10",
+            "categories": [
+              "stage_forward",
+              "amount"
+            ],
+            "delta": 20000
+          },
+          {
+            "id": "e3",
+            "date": "2026-09-15",
+            "categories": [
+              "stage_backward",
+              "owner"
+            ]
+          },
+          {
+            "id": "e4",
+            "date": "2026-09-20",
+            "categories": [
+              "won"
+            ]
+          },
+          {
+            "id": "e5",
+            "date": "2026-09-21",
+            "categories": [
+              "lost"
+            ]
+          },
+          {
+            "id": "e6",
+            "date": "2026-10-01",
+            "categories": [
+              "amount"
+            ],
+            "delta": -50000
+          },
+          {
+            "id": "e2",
+            "date": "2026-09-10",
+            "categories": [
+              "stage_forward",
+              "amount"
+            ],
+            "delta": 20000
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "ids": [
+          "e1",
+          "e2",
+          "e3",
+          "e4",
+          "e5"
+        ],
+        "amount_delta": 20000,
+        "categories": [
+          "amount",
+          "lost",
+          "new",
+          "owner",
+          "stage_backward",
+          "stage_forward",
+          "won"
+        ]
+      }
+    },
+    {
+      "id": "C68",
+      "name": "複数売上・一部請求入金・返品と返金を分離",
+      "operation": "ledger",
+      "input": {
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ],
+        "rows": [
+          {
+            "id": "s1",
+            "kind": "sale",
+            "date": "2026-09-01",
+            "amount": 60000
+          },
+          {
+            "id": "s2",
+            "kind": "sale",
+            "date": "2026-09-02",
+            "amount": 40000
+          },
+          {
+            "id": "i1",
+            "kind": "invoice",
+            "date": "2026-09-03",
+            "amount": 100000
+          },
+          {
+            "id": "r1",
+            "kind": "receipt",
+            "date": "2026-09-04",
+            "amount": 80000
+          },
+          {
+            "id": "sadj",
+            "kind": "sale",
+            "date": "2026-09-10",
+            "amount": -10000
+          },
+          {
+            "id": "iadj",
+            "kind": "invoice",
+            "date": "2026-09-10",
+            "amount": -10000
+          },
+          {
+            "id": "radj",
+            "kind": "receipt",
+            "date": "2026-09-11",
+            "amount": -5000
+          }
+        ]
+      },
+      "expected": {
+        "sale": 90000,
+        "invoice": 90000,
+        "receipt": 75000,
+        "unbilled": 0,
+        "unpaid": 15000
+      },
+      "requirement": "7.4、7.5"
+    },
+    {
+      "id": "C69",
+      "name": "未入金の負残高を隠さない",
+      "operation": "ledger",
+      "input": {
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ],
+        "rows": [
+          {
+            "id": "s1",
+            "kind": "sale",
+            "date": "2026-09-01",
+            "amount": 100000
+          },
+          {
+            "id": "i1",
+            "kind": "invoice",
+            "date": "2026-09-02",
+            "amount": 100000
+          },
+          {
+            "id": "r1",
+            "kind": "receipt",
+            "date": "2026-09-03",
+            "amount": 100000
+          },
+          {
+            "id": "iadj",
+            "kind": "invoice",
+            "date": "2026-09-05",
+            "amount": -10000
+          }
+        ]
+      },
+      "expected": {
+        "sale": 100000,
+        "invoice": 90000,
+        "receipt": 100000,
+        "unbilled": 10000,
+        "unpaid": -10000
+      },
+      "requirement": "7.4 / 調整中の差額"
+    },
+    {
+      "id": "C70",
+      "name": "期間開始前・終了後の実績を分離",
+      "operation": "ledger",
+      "input": {
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ],
+        "rows": [
+          {
+            "id": "s0",
+            "kind": "sale",
+            "date": "2026-08-31",
+            "amount": 100
+          },
+          {
+            "id": "s1",
+            "kind": "sale",
+            "date": "2026-09-01",
+            "amount": 200
+          },
+          {
+            "id": "s2",
+            "kind": "sale",
+            "date": "2026-09-30",
+            "amount": 300
+          },
+          {
+            "id": "s3",
+            "kind": "sale",
+            "date": "2026-10-01",
+            "amount": 400
+          }
+        ]
+      },
+      "expected": {
+        "sale": 500,
+        "invoice": 0,
+        "receipt": 0,
+        "unbilled": 600,
+        "unpaid": 0
+      },
+      "requirement": "7.1、7.4 / 補足案A"
+    },
+    {
+      "id": "C71",
+      "name": "無効アカウントは役員でも取得不可",
+      "operation": "access",
+      "input": {
+        "role": "executive",
+        "active": false,
+        "production": true,
+        "now": "2026-09-07T10:00:00Z"
+      },
+      "expected": [],
+      "requirement": "5.3、5.4"
+    },
+    {
+      "id": "C72",
+      "name": "3か月四予算の合計",
+      "operation": "budgets",
+      "input": {
+        "months": [
+          "2026-07",
+          "2026-08",
+          "2026-09"
+        ],
+        "rows": [
+          {
+            "month": "2026-07",
+            "kind": "sales",
+            "amount": 100000,
+            "version": 1
+          },
+          {
+            "month": "2026-07",
+            "kind": "business_expense",
+            "amount": 10000,
+            "version": 1
+          },
+          {
+            "month": "2026-07",
+            "kind": "common",
+            "amount": 5000,
+            "version": 1
+          },
+          {
+            "month": "2026-07",
+            "kind": "labor",
+            "amount": 20000,
+            "version": 1
+          },
+          {
+            "month": "2026-08",
+            "kind": "sales",
+            "amount": 100000,
+            "version": 1
+          },
+          {
+            "month": "2026-08",
+            "kind": "business_expense",
+            "amount": 10000,
+            "version": 1
+          },
+          {
+            "month": "2026-08",
+            "kind": "common",
+            "amount": 5000,
+            "version": 1
+          },
+          {
+            "month": "2026-08",
+            "kind": "labor",
+            "amount": 20000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "sales",
+            "amount": 100000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "business_expense",
+            "amount": 10000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "common",
+            "amount": 5000,
+            "version": 1
+          },
+          {
+            "month": "2026-09",
+            "kind": "labor",
+            "amount": 20000,
+            "version": 1
+          }
+        ],
+        "actual": {
+          "sales": 320000,
+          "business_expense": 35000,
+          "common": 14000,
+          "labor": 60000
+        }
+      },
+      "expected": {
+        "values": {
+          "sales": 300000,
+          "business_expense": 30000,
+          "common": 15000,
+          "labor": 60000
+        },
+        "mode": "period_budget",
+        "variance": {
+          "sales": 20000,
+          "business_expense": 5000,
+          "common": -1000,
+          "labor": 0
+        }
+      },
+      "requirement": "7.1、7.5"
+    }
+  ]
+}
