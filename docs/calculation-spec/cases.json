@@ -2766,6 +2766,108 @@
         ],
         "confirmed": 100000
       }
+    },
+    {
+      "id": "C90",
+      "name": "3か月の前期間",
+      "operation": "previous",
+      "requirement": "7.1",
+      "input": {
+        "kind": "months",
+        "period": [
+          "2026-07-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": [
+        "2026-04-01",
+        "2026-06-30"
+      ]
+    },
+    {
+      "id": "C91",
+      "name": "6か月の前期間・年越し",
+      "operation": "previous",
+      "requirement": "7.1",
+      "input": {
+        "kind": "months",
+        "period": [
+          "2026-04-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": [
+        "2025-10-01",
+        "2026-03-31"
+      ]
+    },
+    {
+      "id": "C92",
+      "name": "会計年度の前期間",
+      "operation": "previous",
+      "requirement": "7.1",
+      "input": {
+        "kind": "fiscal",
+        "period": [
+          "2025-10-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": [
+        "2024-10-01",
+        "2025-09-30"
+      ]
+    },
+    {
+      "id": "C93",
+      "name": "短縮年度は同じ月数を比較",
+      "operation": "previous",
+      "requirement": "7.1",
+      "input": {
+        "kind": "fiscal",
+        "period": [
+          "2026-10-01",
+          "2027-03-31"
+        ]
+      },
+      "expected": [
+        "2026-04-01",
+        "2026-09-30"
+      ]
+    },
+    {
+      "id": "C94",
+      "name": "変更後年度の比較は直前12か月",
+      "operation": "previous",
+      "requirement": "7.1",
+      "input": {
+        "kind": "fiscal",
+        "period": [
+          "2027-04-01",
+          "2028-03-31"
+        ]
+      },
+      "expected": [
+        "2026-04-01",
+        "2027-03-31"
+      ]
+    },
+    {
+      "id": "C95",
+      "name": "3か月比較とうるう年",
+      "operation": "previous",
+      "requirement": "7.1",
+      "input": {
+        "kind": "months",
+        "period": [
+          "2028-03-01",
+          "2028-05-31"
+        ]
+      },
+      "expected": [
+        "2027-12-01",
+        "2028-02-29"
+      ]
     }
   ],
   "clarifications": [

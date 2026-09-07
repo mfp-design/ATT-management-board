@@ -38,7 +38,13 @@ def previous(v):
         else:
             lo, hi = start.replace(day=11), start.replace(day=20)
         return [lo.isoformat(), hi.isoformat()]
-    raise ValueError('This reference check covers monthly and ten-day comparisons only')
+    if v['kind'] in ['months', 'fiscal']:
+        assert start.day == 1 and end.day == calendar.monthrange(end.year,end.month)[1]
+        months=(end.year-start.year)*12+end.month-start.month+1
+        assert 1<=months<=12
+        y,m=month_shift(start.year,start.month,-months)
+        return [date(y,m,1).isoformat(),(start-timedelta(days=1)).isoformat()]
+    raise ValueError(v['kind'])
 
 
 def actual_sum(rows, kind, start, end):
