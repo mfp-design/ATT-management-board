@@ -1307,7 +1307,7 @@
       "id": "C58",
       "name": "10日毎の予算は月次参考",
       "operation": "budgets",
-      "requirement": "補足案C",
+      "requirement": "7.1、7.5 / 2026-09-07ユーザー確定C",
       "input": {
         "months": [
           "2026-09"
@@ -2144,9 +2144,346 @@
         "2026-02-11",
         "2026-02-20"
       ]
+    },
+    {
+      "id": "C81",
+      "name": "実経費を利用日で集計・上旬",
+      "operation": "expense_period",
+      "requirement": "7.1、7.5 / 2026-09-07ユーザー確定C",
+      "input": {
+        "period": [
+          "2026-09-01",
+          "2026-09-10"
+        ],
+        "rows": [
+          {
+            "id": "e0",
+            "date": "2026-08-31",
+            "target": "A",
+            "amount": 9000
+          },
+          {
+            "id": "e1",
+            "date": "2026-09-01",
+            "target": "A",
+            "amount": 10000
+          },
+          {
+            "id": "e2",
+            "date": "2026-09-10",
+            "target": "common",
+            "amount": 2000
+          },
+          {
+            "id": "e3",
+            "date": "2026-09-11",
+            "target": "A",
+            "amount": 3000
+          },
+          {
+            "id": "e4",
+            "date": "2026-09-20",
+            "target": "unclassified",
+            "amount": 4000
+          },
+          {
+            "id": "e5",
+            "date": "2026-09-21",
+            "target": "A",
+            "amount": 5000
+          },
+          {
+            "id": "e6",
+            "date": "2026-09-30",
+            "target": "common",
+            "amount": 6000
+          },
+          {
+            "id": "refund",
+            "date": "2026-09-25",
+            "target": "A",
+            "amount": -1000
+          },
+          {
+            "id": "next",
+            "date": "2026-10-01",
+            "target": "A",
+            "amount": 8000
+          },
+          {
+            "id": "plan",
+            "date": "2026-09-05",
+            "target": "A",
+            "amount": 30000,
+            "actual": false
+          }
+        ]
+      },
+      "expected": {
+        "by_target": {
+          "A": 10000,
+          "common": 2000,
+          "unclassified": 0
+        },
+        "total": 12000,
+        "labor_included": false
+      }
+    },
+    {
+      "id": "C82",
+      "name": "実経費を利用日で集計・中旬",
+      "operation": "expense_period",
+      "requirement": "7.1、7.5 / 2026-09-07ユーザー確定C",
+      "input": {
+        "period": [
+          "2026-09-11",
+          "2026-09-20"
+        ],
+        "rows": [
+          {
+            "id": "e0",
+            "date": "2026-08-31",
+            "target": "A",
+            "amount": 9000
+          },
+          {
+            "id": "e1",
+            "date": "2026-09-01",
+            "target": "A",
+            "amount": 10000
+          },
+          {
+            "id": "e2",
+            "date": "2026-09-10",
+            "target": "common",
+            "amount": 2000
+          },
+          {
+            "id": "e3",
+            "date": "2026-09-11",
+            "target": "A",
+            "amount": 3000
+          },
+          {
+            "id": "e4",
+            "date": "2026-09-20",
+            "target": "unclassified",
+            "amount": 4000
+          },
+          {
+            "id": "e5",
+            "date": "2026-09-21",
+            "target": "A",
+            "amount": 5000
+          },
+          {
+            "id": "e6",
+            "date": "2026-09-30",
+            "target": "common",
+            "amount": 6000
+          },
+          {
+            "id": "refund",
+            "date": "2026-09-25",
+            "target": "A",
+            "amount": -1000
+          },
+          {
+            "id": "next",
+            "date": "2026-10-01",
+            "target": "A",
+            "amount": 8000
+          },
+          {
+            "id": "plan",
+            "date": "2026-09-05",
+            "target": "A",
+            "amount": 30000,
+            "actual": false
+          }
+        ]
+      },
+      "expected": {
+        "by_target": {
+          "A": 3000,
+          "common": 0,
+          "unclassified": 4000
+        },
+        "total": 7000,
+        "labor_included": false
+      }
+    },
+    {
+      "id": "C83",
+      "name": "実経費を利用日で集計・下旬",
+      "operation": "expense_period",
+      "requirement": "7.1、7.5 / 2026-09-07ユーザー確定C",
+      "input": {
+        "period": [
+          "2026-09-21",
+          "2026-09-30"
+        ],
+        "rows": [
+          {
+            "id": "e0",
+            "date": "2026-08-31",
+            "target": "A",
+            "amount": 9000
+          },
+          {
+            "id": "e1",
+            "date": "2026-09-01",
+            "target": "A",
+            "amount": 10000
+          },
+          {
+            "id": "e2",
+            "date": "2026-09-10",
+            "target": "common",
+            "amount": 2000
+          },
+          {
+            "id": "e3",
+            "date": "2026-09-11",
+            "target": "A",
+            "amount": 3000
+          },
+          {
+            "id": "e4",
+            "date": "2026-09-20",
+            "target": "unclassified",
+            "amount": 4000
+          },
+          {
+            "id": "e5",
+            "date": "2026-09-21",
+            "target": "A",
+            "amount": 5000
+          },
+          {
+            "id": "e6",
+            "date": "2026-09-30",
+            "target": "common",
+            "amount": 6000
+          },
+          {
+            "id": "refund",
+            "date": "2026-09-25",
+            "target": "A",
+            "amount": -1000
+          },
+          {
+            "id": "next",
+            "date": "2026-10-01",
+            "target": "A",
+            "amount": 8000
+          },
+          {
+            "id": "plan",
+            "date": "2026-09-05",
+            "target": "A",
+            "amount": 30000,
+            "actual": false
+          }
+        ]
+      },
+      "expected": {
+        "by_target": {
+          "A": 4000,
+          "common": 6000,
+          "unclassified": 0
+        },
+        "total": 10000,
+        "labor_included": false
+      }
+    },
+    {
+      "id": "C84",
+      "name": "実経費を利用日で集計・月全体",
+      "operation": "expense_period",
+      "requirement": "7.1、7.5 / 2026-09-07ユーザー確定C",
+      "input": {
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ],
+        "rows": [
+          {
+            "id": "e0",
+            "date": "2026-08-31",
+            "target": "A",
+            "amount": 9000
+          },
+          {
+            "id": "e1",
+            "date": "2026-09-01",
+            "target": "A",
+            "amount": 10000
+          },
+          {
+            "id": "e2",
+            "date": "2026-09-10",
+            "target": "common",
+            "amount": 2000
+          },
+          {
+            "id": "e3",
+            "date": "2026-09-11",
+            "target": "A",
+            "amount": 3000
+          },
+          {
+            "id": "e4",
+            "date": "2026-09-20",
+            "target": "unclassified",
+            "amount": 4000
+          },
+          {
+            "id": "e5",
+            "date": "2026-09-21",
+            "target": "A",
+            "amount": 5000
+          },
+          {
+            "id": "e6",
+            "date": "2026-09-30",
+            "target": "common",
+            "amount": 6000
+          },
+          {
+            "id": "refund",
+            "date": "2026-09-25",
+            "target": "A",
+            "amount": -1000
+          },
+          {
+            "id": "next",
+            "date": "2026-10-01",
+            "target": "A",
+            "amount": 8000
+          },
+          {
+            "id": "plan",
+            "date": "2026-09-05",
+            "target": "A",
+            "amount": 30000,
+            "actual": false
+          }
+        ]
+      },
+      "expected": {
+        "by_target": {
+          "A": 17000,
+          "common": 8000,
+          "unclassified": 4000
+        },
+        "total": 29000,
+        "labor_included": false
+      }
     }
   ],
   "clarifications": [
-    "2026-09-07: 月次は前暦月、10日毎は前の上旬・中旬・下旬区分"
+    "2026-09-07: 月次は前暦月、10日毎は前の上旬・中旬・下旬区分",
+    "2026-09-07: 実経費は利用日で10日毎集計、予算等の見込みコストは日割り不要。月次人件費は月次参考。"
   ]
 }

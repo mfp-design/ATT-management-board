@@ -131,6 +131,10 @@ def events(v):
 def run(c):
     v=c['input'];op=c['operation']
     handlers=dict(period=period,previous=previous,ledger=ledger,forecast=forecast,profit=profit,guard=guards,adjust=adjust,budgets=budgets,access=access,next_actions=next_actions,fiscal=fiscal,events=events)
+    if op=='expense_period':
+        start,end=v['period']; rows={x['id']:x for x in v['rows'] if x.get('actual',True) and start<=x['date']<=end}
+        parts={k:sum(x['amount'] for x in rows.values() if x['target']==k) for k in ['A','common','unclassified']}
+        return dict(by_target=parts,total=sum(parts.values()),labor_included=False)
     if op=='jst_date':return datetime.fromisoformat(v).astimezone(timezone(timedelta(hours=9))).date().isoformat()
     if op=='late':return dict(old_profit=v['sales']-v['old_expense'],current_profit=v['sales']-v['old_expense']-v['late_expense'],state='reclose_pending',expense_month=v['use_date'][:7],old_version_preserved=True)
     if op=='deadline':return dict(overdue=v['today']>v['target'],auto_close=False,auto_stop=False)
