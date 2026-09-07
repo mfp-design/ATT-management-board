@@ -9,3 +9,8 @@ tests/fixture-*.html
 # OS / editor cruft
 .DS_Store
 node_modules/
+
+# Local credentials and recovery codes (files or directories)
+.env
+.env.*
+!.env.example
