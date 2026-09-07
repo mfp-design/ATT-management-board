@@ -412,7 +412,8 @@
             "plans": [
               {
                 "date": "2026-09-20",
-                "amount": 100000
+                "amount": 100000,
+                "id": "p1"
               }
             ]
           }
@@ -431,7 +432,8 @@
         "landing": 100000,
         "ids": [
           "d1"
-        ]
+        ],
+        "confirmed": 0
       }
     },
     {
@@ -454,7 +456,8 @@
             "plans": [
               {
                 "date": "2026-09-20",
-                "amount": 100000
+                "amount": 100000,
+                "id": "p1"
               }
             ]
           }
@@ -470,10 +473,11 @@
         "amount": 100000,
         "forecast": 0,
         "sales": 0,
-        "landing": 0,
+        "landing": 100000,
         "ids": [
           "d1"
-        ]
+        ],
+        "confirmed": 100000
       }
     },
     {
@@ -496,7 +500,8 @@
             "plans": [
               {
                 "date": "2026-09-20",
-                "amount": 100000
+                "amount": 100000,
+                "id": "p1"
               }
             ]
           }
@@ -507,7 +512,8 @@
             "deal": "d1",
             "kind": "sale",
             "date": "2026-09-20",
-            "amount": 100000
+            "amount": 100000,
+            "plan": "p1"
           }
         ],
         "period": [
@@ -523,7 +529,8 @@
         "landing": 100000,
         "ids": [
           "d1"
-        ]
+        ],
+        "confirmed": 100000
       }
     },
     {
@@ -546,7 +553,8 @@
             "plans": [
               {
                 "date": "2026-09-20",
-                "amount": 100000
+                "amount": 100000,
+                "id": "p1"
               }
             ]
           }
@@ -565,7 +573,8 @@
         "landing": 0,
         "ids": [
           "d1"
-        ]
+        ],
+        "confirmed": 0
       }
     },
     {
@@ -588,7 +597,8 @@
             "plans": [
               {
                 "date": "2026-09-20",
-                "amount": 100000
+                "amount": 100000,
+                "id": "p1"
               }
             ]
           },
@@ -604,7 +614,8 @@
             "plans": [
               {
                 "date": "2026-09-20",
-                "amount": 100000
+                "amount": 100000,
+                "id": "p1"
               }
             ]
           }
@@ -627,7 +638,8 @@
         "landing": 100000,
         "ids": [
           "d1"
-        ]
+        ],
+        "confirmed": 0
       }
     },
     {
@@ -650,7 +662,8 @@
             "plans": [
               {
                 "date": "2026-09-20",
-                "amount": 100000
+                "amount": 100000,
+                "id": "p1"
               }
             ],
             "cancelled": true
@@ -668,7 +681,8 @@
             "plans": [
               {
                 "date": "2026-09-20",
-                "amount": 100000
+                "amount": 100000,
+                "id": "p1"
               }
             ]
           },
@@ -685,7 +699,8 @@
             "plans": [
               {
                 "date": "2026-09-25",
-                "amount": 200000
+                "amount": 200000,
+                "id": "p1"
               }
             ]
           }
@@ -696,7 +711,8 @@
             "deal": "won-part",
             "kind": "sale",
             "date": "2026-09-20",
-            "amount": 100000
+            "amount": 100000,
+            "plan": "p1"
           }
         ],
         "period": [
@@ -713,7 +729,8 @@
         "ids": [
           "ongoing-part",
           "won-part"
-        ]
+        ],
+        "confirmed": 100000
       }
     },
     {
@@ -2479,6 +2496,275 @@
         },
         "total": 29000,
         "labor_included": false
+      }
+    },
+    {
+      "id": "C85",
+      "name": "成約済み複数売上の一部計上・残予定を一度だけ加算",
+      "operation": "forecast",
+      "requirement": "7.1、7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "won",
+            "amount": 100000,
+            "plans": [
+              {
+                "id": "p1",
+                "date": "2026-09-20",
+                "amount": 40000
+              },
+              {
+                "id": "p2",
+                "date": "2026-09-25",
+                "amount": 60000
+              }
+            ]
+          }
+        ],
+        "sales": [
+          {
+            "id": "s1",
+            "deal": "d1",
+            "kind": "sale",
+            "date": "2026-09-20",
+            "amount": 40000,
+            "plan": "p1"
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 0,
+        "sales": 40000,
+        "landing": 100000,
+        "ids": [
+          "d1"
+        ],
+        "confirmed": 100000
+      }
+    },
+    {
+      "id": "C86",
+      "name": "予定月より前に計上済みの記録を再加算しない",
+      "operation": "forecast",
+      "requirement": "7.1、7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "won",
+            "amount": 100000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000,
+                "id": "p1"
+              }
+            ]
+          }
+        ],
+        "sales": [
+          {
+            "id": "s1",
+            "deal": "d1",
+            "kind": "sale",
+            "date": "2026-08-31",
+            "amount": 100000,
+            "plan": "p1"
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 0,
+        "sales": 0,
+        "landing": 0,
+        "ids": [
+          "d1"
+        ],
+        "confirmed": 0
+      }
+    },
+    {
+      "id": "C87",
+      "name": "対象期間外の成約済み予定を除外",
+      "operation": "forecast",
+      "requirement": "7.1、7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "won",
+            "amount": 100000,
+            "plans": [
+              {
+                "id": "p1",
+                "date": "2026-10-01",
+                "amount": 100000
+              }
+            ]
+          }
+        ],
+        "sales": [],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 0,
+        "sales": 0,
+        "landing": 0,
+        "ids": [
+          "d1"
+        ],
+        "confirmed": 0
+      }
+    },
+    {
+      "id": "C88",
+      "name": "実績の重複取得でも予定と二重加算しない",
+      "operation": "forecast",
+      "requirement": "7.1、7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "won",
+            "amount": 100000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000,
+                "id": "p1"
+              }
+            ]
+          }
+        ],
+        "sales": [
+          {
+            "id": "s1",
+            "deal": "d1",
+            "kind": "sale",
+            "date": "2026-09-20",
+            "amount": 100000,
+            "plan": "p1"
+          },
+          {
+            "id": "s1",
+            "deal": "d1",
+            "kind": "sale",
+            "date": "2026-09-20",
+            "amount": 100000,
+            "plan": "p1"
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 0,
+        "sales": 100000,
+        "landing": 100000,
+        "ids": [
+          "d1"
+        ],
+        "confirmed": 100000
+      }
+    },
+    {
+      "id": "C89",
+      "name": "期末より後の計上は当期末の未計上予定を消さない",
+      "operation": "forecast",
+      "requirement": "7.1、7.3",
+      "input": {
+        "versions": [
+          {
+            "id": "d1",
+            "at": "2026-09-01",
+            "business": "A",
+            "owners": [
+              "m1",
+              "m2"
+            ],
+            "stage": "won",
+            "amount": 100000,
+            "plans": [
+              {
+                "date": "2026-09-20",
+                "amount": 100000,
+                "id": "p1"
+              }
+            ]
+          }
+        ],
+        "sales": [
+          {
+            "id": "s1",
+            "deal": "d1",
+            "kind": "sale",
+            "date": "2026-10-01",
+            "amount": 100000,
+            "plan": "p1"
+          }
+        ],
+        "period": [
+          "2026-09-01",
+          "2026-09-30"
+        ]
+      },
+      "expected": {
+        "count": 1,
+        "amount": 100000,
+        "forecast": 0,
+        "sales": 0,
+        "landing": 100000,
+        "ids": [
+          "d1"
+        ],
+        "confirmed": 100000
       }
     }
   ],

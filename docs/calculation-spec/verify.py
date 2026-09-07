@@ -61,7 +61,9 @@ def forecast(v):
     chosen=[d for d in snapshots.values() if not d.get('cancelled') and (not v.get('business') or d['business']==v['business']) and (not v.get('members') or set(v['members']) & set(d['owners'])) and (not v.get('stage') or d['stage']==v['stage'])]
     prospect=sum(p['amount'] for d in chosen if d['stage'] in ['lead','approach','proposal','negotiation'] for p in d['plans'] if start <= p['date'] <= end)
     actual=actual_sum([r for r in v.get('sales',[]) if r['deal'] in {d['id'] for d in chosen}], 'sale', start, end)
-    return dict(count=len(chosen),amount=sum(d['amount'] for d in chosen),forecast=prospect,sales=actual,landing=actual+prospect,ids=sorted(d['id'] for d in chosen))
+    recognized={(r['deal'],r['plan']) for r in v.get('sales',[]) if r['kind']=='sale' and r.get('actual',True) and r['date']<=end}
+    pending=sum(p['amount'] for d in chosen if d['stage']=='won' for p in {p['id']:p for p in d['plans']}.values() if start<=p['date']<=end and (d['id'],p['id']) not in recognized)
+    return dict(count=len(chosen),amount=sum(d['amount'] for d in chosen),forecast=prospect,sales=actual,confirmed=actual+pending,landing=actual+pending+prospect,ids=sorted(d['id'] for d in chosen))
 
 def profit(v):
     exp=dict.fromkeys(v['sales'],0); common=unclassified=review=0
