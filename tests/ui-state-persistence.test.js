@@ -44,7 +44,7 @@ async function withMockedReloadingPublish(page) {
   }
 
   await withMockedReloadingPublish(page);
-  await page.goto('file://' + path.join(__dirname, 'index.html'));
+  await page.goto('file://' + path.join(__dirname, '..', 'public', 'index.html'));
   await page.waitForTimeout(200);
 
   // 1. Navigate to businesses tab, add a business -> triggers a simulated reload

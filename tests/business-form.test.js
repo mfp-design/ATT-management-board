@@ -8,7 +8,7 @@ const path = require('path');
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
   page.on('console', (msg) => { if (msg.type() === 'error' && !msg.text().includes('ERR_TUNNEL_CONNECTION_FAILED')) errors.push('console: ' + msg.text()); });
 
-  await page.goto('file://' + path.join(__dirname, 'index.html'));
+  await page.goto('file://' + path.join(__dirname, '..', 'public', 'index.html'));
   await page.waitForTimeout(200);
 
   let allPass = true;
@@ -49,7 +49,7 @@ const path = require('path');
   check(names.length === 3, 'three businesses now present: ' + names.join(','));
   check(names[0].includes('コンサル事業') && names[1].includes('研修事業') && names[2].includes('IT事業'), 'initial order is insertion order: ' + names.join(' | '));
 
-  // reordering itself (drag-and-drop) is covered by test10-business-dragdrop.js
+  // Reordering itself (drag-and-drop) is covered by business-drag-drop.test.js.
 
   check(errors.length === 0, 'no unexpected console/page errors (' + errors.join(' | ') + ')');
 

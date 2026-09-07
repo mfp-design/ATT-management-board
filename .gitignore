@@ -4,6 +4,7 @@ debug-businesses.png
 debug-dom.html
 legacy-doc.html
 published-roundtrip.html
+tests/fixture-*.html
 
 # OS / editor cruft
 .DS_Store

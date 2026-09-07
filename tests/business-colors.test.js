@@ -8,7 +8,7 @@ const path = require('path');
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
   page.on('console', (msg) => { if (msg.type() === 'error' && !msg.text().includes('ERR_TUNNEL_CONNECTION_FAILED')) errors.push('console: ' + msg.text()); });
 
-  await page.goto('file://' + path.join(__dirname, 'index.html'));
+  await page.goto('file://' + path.join(__dirname, '..', 'public', 'index.html'));
   await page.waitForTimeout(200);
 
   let allPass = true;
@@ -20,8 +20,8 @@ const path = require('path');
   await page.click('.nav-item[data-tab="businesses"]');
   await page.waitForTimeout(100);
 
-  // 1. Add-business form is free-text with suggestions (see test8/test10 for
-  // full coverage of this form) — here we just need two businesses to check colors.
+  // 1. Add-business form is free-text with suggestions (see business-form and
+  // business-drag-drop for full coverage) — here we just need two businesses.
   await page.click('[data-action="open-add-business"]');
   await page.waitForTimeout(100);
   await page.fill('input[name="name"]', 'FP事業');

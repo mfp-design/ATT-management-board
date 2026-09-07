@@ -9,7 +9,7 @@ const path = require('path');
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
   page.on('console', (msg) => { if (msg.type() === 'error') errors.push('console: ' + msg.text()); });
 
-  await page.goto('file://' + path.join(__dirname, 'index.html'));
+  await page.goto('file://' + path.join(__dirname, '..', 'public', 'index.html'));
   await page.waitForTimeout(200);
 
   let allPass = true;
@@ -52,7 +52,7 @@ const path = require('path');
   await browser.close();
 
   // --- Part 2: build a fixture HTML with a pre-linked customer, then verify editing preserves accountId ---
-  const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'public', 'index.html'), 'utf8');
   const fixtureState = {
     businesses: [],
     accounts: [{ id: 'acc_fixture1', name: '株式会社サンプル商事', industry: '', contact: '山田 太郎', phone: '', email: '', url: 'https://sample-shoji.example.com', address: '', memo: '' }],

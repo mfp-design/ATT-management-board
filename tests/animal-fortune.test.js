@@ -15,7 +15,7 @@ const cases = [
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await page.goto('file://' + path.join(__dirname, 'index.html'));
+  await page.goto('file://' + path.join(__dirname, '..', 'public', 'index.html'));
   await page.waitForTimeout(200);
 
   let allPass = true;
@@ -36,4 +36,5 @@ const cases = [
   }
   console.log(allPass ? '\nALL CASES PASSED' : '\nSOME CASES FAILED');
   await browser.close();
+  process.exit(allPass ? 0 : 1);
 })();
