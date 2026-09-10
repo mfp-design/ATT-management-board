@@ -218,3 +218,21 @@ test('signed correction returns private success view and schedules queued displa
   const receipt=s.sqlite.prepare('SELECT * FROM poc_interaction_receipts').get();
   assert.equal(receipt.actor_id,'UHELPER');assert.equal(receipt.http_status,200);assert.equal(receipt.response_action,'update');
 });
+
+test('registered tester corrects a card without owner Slack ID and remains the actual actor',async()=>{
+  const s=await helperReady();
+  s.sqlite.exec('UPDATE poc_card_owners SET slack_user_id=NULL; UPDATE poc_classifications SET owner_id=NULL;');
+  const p=await confirm(s,await open(s));
+  const result=await correctClassification(s.env,p);
+  assert.equal(result.saved,true);assert.equal(current(s).owner_id,null);
+  assert.equal(current(s).classified_by,'UHELPER');
+  assert.equal(s.sqlite.prepare('SELECT actor_id FROM poc_classification_revisions').get().actor_id,'UHELPER');
+});
+test('assigning the real owner during an open tester correction prevents stale save',async()=>{
+  const s=await helperReady();
+  s.sqlite.exec('UPDATE poc_card_owners SET slack_user_id=NULL; UPDATE poc_classifications SET owner_id=NULL;');
+  const p=await confirm(s,await open(s));
+  s.sqlite.exec("UPDATE poc_card_owners SET slack_user_id='UNEWOWNER'");
+  assert.equal((await correctClassification(s.env,p)).status,403);
+  assert.equal(revisionCount(s),0);
+});

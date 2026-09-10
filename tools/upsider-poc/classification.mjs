@@ -5,6 +5,11 @@ const transactionId = /^[0-9a-f-]{36}$/i;
 const changed = r => r?.meta?.changes === 1;
 const statement = (db, sql, ...args) => db.prepare(sql).bind(...args);
 
+export function mentionUserId(row, env = {}) {
+  const id = env.POC_MENTION_USER_ID || row.owner_id;
+  return userId.test(id || '') ? id : null;
+}
+
 export async function canRespond(db, row, actor) {
   if (!row || !userId.test(actor || '')) return false;
   if (actor === row.owner_id) return true;
@@ -21,7 +26,8 @@ export async function ingestClassification(env, payload) {
   if (env.POC_CURRENCY !== 'JPY' || env.POC_TIMEZONE !== 'Asia/Tokyo') return review('currency_timezone_unconfirmed');
   const value = { ...parsed.value, currency: 'JPY', timezone: 'Asia/Tokyo' };
   const owner = await statement(db, 'SELECT * FROM poc_card_owners WHERE team_id=? AND card_id=? AND enabled=1', team, value.cardId).first();
-  const mapped = owner && userId.test(owner.slack_user_id || '');
+  const ownerId = owner && userId.test(owner.slack_user_id || '') ? owner.slack_user_id : null;
+  const mapped = owner && mentionUserId({owner_id:ownerId},env);
   const existing = await statement(db, 'SELECT details FROM poc_classifications WHERE team_id=? AND transaction_id=?', team, value.transactionId).first();
   if (existing && existing.details !== JSON.stringify(value)) {
     await db.batch([
@@ -34,21 +40,22 @@ export async function ingestClassification(env, payload) {
     statement(db, `INSERT OR IGNORE INTO poc_classifications
       (team_id,transaction_id,card_id,channel_id,source_ts,event_id,details,owner_id,state)
       VALUES (?,?,?,?,?,?,?,?,?)`, team, value.transactionId, value.cardId, payload.event.channel,
-      payload.event.ts, payload.event_id, JSON.stringify(value), mapped ? owner.slack_user_id : null, mapped ? 'pending' : 'unmapped'),
+      payload.event.ts, payload.event_id, JSON.stringify(value), ownerId, mapped ? 'pending' : 'unmapped'),
     statement(db, `INSERT OR IGNORE INTO poc_slack_outbox (team_id,transaction_id,kind)
       SELECT team_id,transaction_id,'prompt' FROM poc_classifications
       WHERE team_id=? AND transaction_id=? AND state='pending'`, team, value.transactionId),
   ]);
 }
 
-export function promptMessage(row) {
+export function promptMessage(row, env = {}) {
   const data = JSON.parse(row.details);
-  if (!userId.test(row.owner_id || '')) throw Error('Unmapped owner');
+  const recipient = mentionUserId(row,env);
+  if (!recipient) throw Error('Unmapped notification recipient');
   return { channel: row.channel_id, thread_ts: row.source_ts,
     text: '【検証】経費の対象事業を選択してください。',
     unfurl_links: false, unfurl_media: false,
     blocks: [
-      { type: 'section', text: { type: 'mrkdwn', text: `<@${row.owner_id}> 【検証】この決済の対象事業を選択してください。` } },
+      { type: 'section', text: { type: 'mrkdwn', text: `<@${recipient}> 【検証】この決済の対象事業を選択してください。` } },
       { type: 'section', text: { type: 'plain_text', text: `${data.cardName} / ${data.amount}円\n${data.merchant}\n${data.occurredAtLocal}（日本時間）`, emoji: false } },
       { type: 'actions', block_id: `classify:${row.transaction_id}`, elements: [{
         type: 'static_select', action_id: 'poc_classify', placeholder: { type: 'plain_text', text: '対象事業を選択' },
@@ -69,7 +76,7 @@ export async function classify(env, payload) {
   const db = env.DB;
   const row = await statement(db, 'SELECT * FROM poc_classifications WHERE team_id=? AND transaction_id=?', env.SLACK_TEAM_ID,id).first();
   const currentOwner = row && await statement(db, 'SELECT slack_user_id FROM poc_card_owners WHERE team_id=? AND card_id=? AND enabled=1', row.team_id,row.card_id).first();
-  if (!row || !row.owner_id || currentOwner?.slack_user_id !== row.owner_id ||
+  if (!row || !currentOwner || currentOwner.slack_user_id !== row.owner_id ||
       !row.prompt_ts || payload.container?.type !== 'message' || payload.container.channel_id !== row.channel_id ||
       payload.container.message_ts !== row.prompt_ts || payload.message?.ts !== row.prompt_ts || payload.message?.thread_ts !== row.source_ts) return 403;
   if (!await canRespond(db,row,payload.user?.id)) return 403;
@@ -81,7 +88,7 @@ export async function classify(env, payload) {
     statement(db, `UPDATE poc_classifications SET state='classified', business_id=?, classified_by=?, classified_at=?
       WHERE team_id=? AND transaction_id=? AND state='pending'
       AND EXISTS (SELECT 1 FROM poc_card_owners o WHERE o.team_id=poc_classifications.team_id
-        AND o.card_id=poc_classifications.card_id AND o.enabled=1 AND o.slack_user_id=poc_classifications.owner_id)
+        AND o.card_id=poc_classifications.card_id AND o.enabled=1 AND o.slack_user_id IS poc_classifications.owner_id)
       AND (owner_id=? OR EXISTS (SELECT 1 FROM poc_responders r WHERE r.team_id=poc_classifications.team_id
         AND r.slack_user_id=? AND r.enabled=1))`,
       business,payload.user.id,now,row.team_id,id,payload.user.id,payload.user.id),
@@ -105,7 +112,8 @@ export async function flushOutbox(env, send = fetch) {
     let row = await statement(db, 'SELECT * FROM poc_classifications WHERE team_id=? AND transaction_id=?',job.team_id,job.transaction_id).first();
     if (!row || row.channel_id !== env.SLACK_CHANNEL_ID || !['pending','classified'].includes(row.state)) continue;
     const owner = await statement(db, 'SELECT slack_user_id, owner_name FROM poc_card_owners WHERE team_id=? AND card_id=? AND enabled=1',row.team_id,row.card_id).first();
-    if (owner?.slack_user_id !== row.owner_id) continue;
+    if (!owner || owner.slack_user_id !== row.owner_id) continue;
+    if (job.kind === 'prompt' && !mentionUserId(row,env)) continue;
     if (job.kind === 'update' && (!row.prompt_ts || row.state !== 'classified')) continue;
     const claim = await statement(db, "UPDATE poc_slack_outbox SET state='sending' WHERE team_id=? AND transaction_id=? AND kind=? AND state='pending'",job.team_id,job.transaction_id,job.kind).run();
     if (!changed(claim)) continue;
@@ -118,7 +126,7 @@ export async function flushOutbox(env, send = fetch) {
       const revision = job.kind === 'update' ? await statement(db, `SELECT reason FROM poc_classification_revisions
         WHERE team_id=? AND transaction_id=? AND after_business=? AND actor_id=? AND created_at=?
         ORDER BY rowid DESC LIMIT 1`,row.team_id,row.transaction_id,row.business_id,row.classified_by,row.classified_at).first() : null;
-      const body = job.kind === 'prompt' ? promptMessage(row) : {
+      const body = job.kind === 'prompt' ? promptMessage(row,env) : {
         channel:row.channel_id, ts:row.prompt_ts,
         text:`【検証】分類済み：${BUSINESSES[row.business_id]}`,
         blocks:[{type:'section',text:{type:'plain_text',text:`【検証】分類済み：${BUSINESSES[row.business_id]}（回答者：${responderName}）`,emoji:false}},

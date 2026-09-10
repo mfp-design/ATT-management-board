@@ -48,7 +48,7 @@ export async function correctClassification(env, payload, send = fetch) {
     if (!/^[0-9a-f-]{36}$/i.test(id || '') || action.block_id !== `correct:${id}`) return result(400);
     const row = await q(db, 'SELECT * FROM poc_classifications WHERE team_id=? AND transaction_id=?',env.SLACK_TEAM_ID,id).first();
     const owner = row && await q(db,'SELECT slack_user_id FROM poc_card_owners WHERE team_id=? AND card_id=? AND enabled=1',row.team_id,row.card_id).first();
-    if (!row || row.channel_id !== env.SLACK_CHANNEL_ID || !row.owner_id || owner?.slack_user_id !== row.owner_id ||
+    if (!row || row.channel_id !== env.SLACK_CHANNEL_ID || !owner || owner.slack_user_id !== row.owner_id ||
         !row.prompt_ts || payload.container?.type !== 'message' || payload.container.channel_id !== row.channel_id ||
         payload.container.message_ts !== row.prompt_ts || payload.message?.ts !== row.prompt_ts || payload.message?.thread_ts !== row.source_ts) return result(403);
     if (!await canRespond(db,row,payload.user.id)) return result(403);
@@ -78,7 +78,7 @@ export async function correctClassification(env, payload, send = fetch) {
   if (session.expires_at < new Date().toISOString()) return failure('入力の有効期限が切れました。投稿から修正をやり直してください。');
   const row = await q(db,'SELECT * FROM poc_classifications WHERE team_id=? AND transaction_id=?',session.team_id,session.transaction_id).first();
   const owner = row && await q(db,'SELECT slack_user_id FROM poc_card_owners WHERE team_id=? AND card_id=? AND enabled=1',row.team_id,row.card_id).first();
-  if (!row || row.channel_id !== env.SLACK_CHANNEL_ID || !row.owner_id || owner?.slack_user_id !== row.owner_id) return result(403);
+  if (!row || row.channel_id !== env.SLACK_CHANNEL_ID || !owner || owner.slack_user_id !== row.owner_id) return result(403);
   if (!await canRespond(db,row,payload.user.id)) return result(403);
   if (row.state !== 'classified' || row.business_id !== session.expected_business || row.classified_at !== session.expected_at)
     return failure('別の変更が保存されています。最新の投稿から修正をやり直してください。');
@@ -103,7 +103,7 @@ export async function correctClassification(env, payload, send = fetch) {
       AND EXISTS (SELECT 1 FROM poc_classifications c JOIN poc_card_owners o ON o.team_id=c.team_id AND o.card_id=c.card_id
         WHERE c.team_id=poc_correction_requests.team_id AND c.transaction_id=poc_correction_requests.transaction_id
         AND c.state='classified' AND c.business_id=poc_correction_requests.expected_business AND c.classified_at=poc_correction_requests.expected_at
-        AND o.slack_user_id=c.owner_id AND o.enabled=1
+        AND o.slack_user_id IS c.owner_id AND o.enabled=1
         AND (c.owner_id=poc_correction_requests.actor_id OR EXISTS (SELECT 1 FROM poc_responders r
           WHERE r.team_id=c.team_id AND r.slack_user_id=poc_correction_requests.actor_id AND r.enabled=1)))
       AND NOT EXISTS (SELECT 1 FROM poc_slack_outbox b WHERE b.team_id=poc_correction_requests.team_id

@@ -1,4 +1,4 @@
-> 最新の認可・配置状況は [代理回答の検証記録](responders-review.md) を参照。事業9択・登録確認・回答修正ボタンを反映済み。自動送信は停止中。
+> 最新の通知先・配置状況は [PoCのメンション先統一](mention-review.md) を参照。事業9択・登録確認・回答修正・修正理由表示を反映済み。自動送信は停止中。
 
 # UPSIDER受信PoC：URL確認と原文保管の基礎
 
@@ -40,6 +40,6 @@
 
 `node --test tools/upsider-poc/*.test.mjs`
 
-全79ケースのうち、受信部分は15ケース：正規署名、D1疎通を伴うchallenge応答、偽署名、過去／未来要求、workspace/channelの不一致、未確認送信元、別app/bot、人の投稿、原文保管と再送キー、DB障害、不正JSON、サイズ上限、非公開データの読出し経路なし。D1はスタブで、SQLiteのテーブル作成・一意制約は別途インメモリSQLiteで検証。Workersの実CPU・実Slack配信の試験ではない。
+全86ケースのうち、受信部分は15ケース：正規署名、D1疎通を伴うchallenge応答、偽署名、過去／未来要求、workspace/channelの不一致、未確認送信元、別app/bot、人の投稿、原文保管と再送キー、DB障害、不正JSON、サイズ上限、非公開データの読出し経路なし。D1はスタブで、SQLiteのテーブル作成・一意制約は別途インメモリSQLiteで検証。Workersの実CPU・実Slack配信の試験ではない。
 
 根拠：[Slack署名検証](https://docs.slack.dev/authentication/verifying-requests-from-slack/)、[URL確認](https://docs.slack.dev/reference/events/url_verification/)。
