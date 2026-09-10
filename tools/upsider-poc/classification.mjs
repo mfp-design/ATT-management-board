@@ -5,6 +5,12 @@ const transactionId = /^[0-9a-f-]{36}$/i;
 const changed = r => r?.meta?.changes === 1;
 const statement = (db, sql, ...args) => db.prepare(sql).bind(...args);
 
+export async function canRespond(db, row, actor) {
+  if (!row || !userId.test(actor || '')) return false;
+  if (actor === row.owner_id) return true;
+  return Boolean(await statement(db, 'SELECT 1 FROM poc_responders WHERE team_id=? AND slack_user_id=? AND enabled=1',row.team_id,actor).first());
+}
+
 export async function ingestClassification(env, payload) {
   const { DB: db } = env;
   const team = payload.team_id;
@@ -63,9 +69,10 @@ export async function classify(env, payload) {
   const db = env.DB;
   const row = await statement(db, 'SELECT * FROM poc_classifications WHERE team_id=? AND transaction_id=?', env.SLACK_TEAM_ID,id).first();
   const currentOwner = row && await statement(db, 'SELECT slack_user_id FROM poc_card_owners WHERE team_id=? AND card_id=? AND enabled=1', row.team_id,row.card_id).first();
-  if (!row || !row.owner_id || payload.user?.id !== row.owner_id || currentOwner?.slack_user_id !== row.owner_id ||
+  if (!row || !row.owner_id || currentOwner?.slack_user_id !== row.owner_id ||
       !row.prompt_ts || payload.container?.type !== 'message' || payload.container.channel_id !== row.channel_id ||
       payload.container.message_ts !== row.prompt_ts || payload.message?.ts !== row.prompt_ts || payload.message?.thread_ts !== row.source_ts) return 403;
+  if (!await canRespond(db,row,payload.user?.id)) return 403;
   if (row.state === 'classified') return row.business_id === business ? 200 : 409;
   if (row.state !== 'pending') return 409;
   const now = new Date().toISOString();
@@ -74,8 +81,10 @@ export async function classify(env, payload) {
     statement(db, `UPDATE poc_classifications SET state='classified', business_id=?, classified_by=?, classified_at=?
       WHERE team_id=? AND transaction_id=? AND state='pending'
       AND EXISTS (SELECT 1 FROM poc_card_owners o WHERE o.team_id=poc_classifications.team_id
-        AND o.card_id=poc_classifications.card_id AND o.enabled=1 AND o.slack_user_id=poc_classifications.owner_id)`,
-      business,payload.user.id,now,row.team_id,id),
+        AND o.card_id=poc_classifications.card_id AND o.enabled=1 AND o.slack_user_id=poc_classifications.owner_id)
+      AND (owner_id=? OR EXISTS (SELECT 1 FROM poc_responders r WHERE r.team_id=poc_classifications.team_id
+        AND r.slack_user_id=? AND r.enabled=1))`,
+      business,payload.user.id,now,row.team_id,id,payload.user.id,payload.user.id),
     statement(db, `INSERT OR IGNORE INTO poc_classification_audit
       SELECT team_id,transaction_id,classified_by,business_id,classified_at FROM poc_classifications
       WHERE team_id=? AND transaction_id=? AND state='classified'`,row.team_id,id),
@@ -103,10 +112,13 @@ export async function flushOutbox(env, send = fetch) {
     try {
       // Re-read after claim: a correction may have committed between the initial read and claim.
       row = await statement(db, 'SELECT * FROM poc_classifications WHERE team_id=? AND transaction_id=?',job.team_id,job.transaction_id).first();
+      const responder = job.kind === 'update' && row.classified_by !== owner.slack_user_id
+        ? await statement(db,'SELECT display_name FROM poc_responders WHERE team_id=? AND slack_user_id=?',row.team_id,row.classified_by).first() : null;
+      const responderName = row.classified_by === owner.slack_user_id ? (owner.owner_name || row.classified_by) : (responder?.display_name || row.classified_by);
       const body = job.kind === 'prompt' ? promptMessage(row) : {
         channel:row.channel_id, ts:row.prompt_ts,
         text:`【検証】分類済み：${BUSINESSES[row.business_id]}`,
-        blocks:[{type:'section',text:{type:'plain_text',text:`【検証】分類済み：${BUSINESSES[row.business_id]}（回答者：${row.classified_by === owner.slack_user_id ? (owner.owner_name || row.classified_by) : row.classified_by}）`,emoji:false}},
+        blocks:[{type:'section',text:{type:'plain_text',text:`【検証】分類済み：${BUSINESSES[row.business_id]}（回答者：${responderName}）`,emoji:false}},
           {type:'actions',block_id:`correct:${row.transaction_id}`,elements:[{type:'button',action_id:'poc_correct',value:row.transaction_id,text:{type:'plain_text',text:'回答を修正する'}}]}],
       };
       const response = await send(`https://slack.com/api/${job.kind === 'prompt' ? 'chat.postMessage' : 'chat.update'}`, {

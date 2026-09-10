@@ -11,6 +11,7 @@ function setup() {
   sqlite.exec(readFileSync(new URL('./schema.sql',import.meta.url),'utf8'));
   sqlite.exec(readFileSync(new URL('./classification.sql',import.meta.url),'utf8'));
   sqlite.exec(readFileSync(new URL('./corrections.sql',import.meta.url),'utf8'));
+  sqlite.exec(readFileSync(new URL('./responders.sql',import.meta.url),'utf8'));
   const db = { prepare(sql) { return { bind(...args) { return {
     async first() { return sqlite.prepare(sql).get(...args) || null; },
     async all() { return {results:sqlite.prepare(sql).all(...args)}; },
@@ -122,4 +123,32 @@ test('currency/timezone confirmation is required before preparing expenses',asyn
   const {sqlite,env}=setup(); delete env.POC_CURRENCY;
   await ingestClassification(env,notice());
   assert.equal(sqlite.prepare('SELECT reason FROM poc_parse_reviews').get().reason,'currency_timezone_unconfirmed');
+});
+
+test('registered responder classifies for owner; audit and completion use actual responder without mention',async()=>{
+  const s=setup();
+  s.sqlite.prepare('INSERT INTO poc_responders VALUES (?,?,?,1)').run('TTEST','UHELPER','総務担当');
+  s.payload.user.id='UHELPER';
+  assert.equal(await classify(s.env,s.payload),200);
+  const row=s.sqlite.prepare('SELECT * FROM poc_classifications').get();
+  assert.equal(row.owner_id,'UOWNER');assert.equal(row.classified_by,'UHELPER');
+  assert.equal(s.sqlite.prepare('SELECT user_id FROM poc_classification_audit').get().user_id,'UHELPER');
+  assert.match(promptMessage(row).blocks[0].text.text,/<@UOWNER>/);
+  let body;
+  await flushOutbox(s.env,async(url,req)=>{body=JSON.parse(req.body);return Response.json({ok:true,channel:'CTEST',ts:'101.1'});});
+  assert.equal(body.blocks[0].text.text,'【検証】分類済み：FP事業（回答者：総務担当）');
+  assert.equal(body.blocks[0].text.type,'plain_text');assert.doesNotMatch(JSON.stringify(body),/<@/);
+});
+for(const [team,enabled] of [['TOTHER',1],['TTEST',0]]) test(`responder grant ${team}/${enabled} cannot authorize classification`,async()=>{
+  const s=setup();s.sqlite.prepare('INSERT INTO poc_responders VALUES (?,?,?,?)').run(team,'UHELPER','総務担当',enabled);
+  s.payload.user.id='UHELPER';assert.equal(await classify(s.env,s.payload),403);
+  assert.equal(s.sqlite.prepare('SELECT state FROM poc_classifications').get().state,'pending');
+});
+test('responder revoked immediately before classification write cannot commit',async()=>{
+  const s=setup();s.sqlite.prepare('INSERT INTO poc_responders VALUES (?,?,?,1)').run('TTEST','UHELPER','総務担当');
+  s.payload.user.id='UHELPER';const batch=s.env.DB.batch;
+  s.env.DB.batch=async statements=>{s.sqlite.exec('UPDATE poc_responders SET enabled=0');return batch(statements);};
+  assert.equal(await classify(s.env,s.payload),409);
+  assert.equal(s.sqlite.prepare('SELECT state FROM poc_classifications').get().state,'pending');
+  assert.equal(s.sqlite.prepare('SELECT COUNT(*) n FROM poc_classification_audit').get().n,0);
 });

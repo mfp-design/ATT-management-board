@@ -1,9 +1,9 @@
-> 最新の配置：事業9択・登録確認・回答修正ボタンを反映済み。自動送信は停止中。詳しくは [修正機能の検証記録](corrections-review.md)。
+> 最新の認可・配置状況は [代理回答の検証記録](responders-review.md) を参照。事業9択・登録確認・回答修正ボタンを反映済み。自動送信は停止中。
 
 # UPSIDER受信PoC：URL確認と原文保管の基礎
 
 2026-09-09 / #9・#10。受信・原文保存はCloudflareで実通知5件の保存を確認済み。
-分類・登録確認・回答修正はCloudflare配置済み（版 `f0308004`）。分類処理は有効、Slack送信は無効。詳細は [分類検証手順](classification-review.md)。
+分類・登録確認・回答修正はCloudflare配置済み。分類処理は有効、Slack送信は無効。詳細は [分類検証手順](classification-review.md)。
 
 ## 現在の対象
 
@@ -24,7 +24,7 @@
 6. Request URLに `https://att-upsider-poc.tiny-smoke-00b7.workers.dev/slack/events` を入力する。
 7. **Verified**を確認し、Save Changesがあれば保存する。URL確認では署名の検証とD1へのSELECTを行う。VerifiedはD1テーブルへの実イベント保存やCPU予算の検証完了を意味しない。
    Socket ModeはOff。Cloudflare変数を保存した後は、DeploymentsのActive deploymentにその版が100%で反映されていることを確認する。保存だけでは古い版が配信され続ける場合がある。
-8. 原文受信だけを準備する段階では購読・Interactivityを無効にしておく。現在の検証環境では `message.groups` と Interactivity を有効化済み。分類には `classification.sql`、修正・操作記録には `corrections.sql` も適用する。詳細は上記の検証記録を参照。
+8. 原文受信だけを準備する段階では購読・Interactivityを無効にしておく。現在の検証環境では `message.groups` と Interactivity を有効化済み。分類には `classification.sql`、修正・操作記録には `corrections.sql`、代理回答権限には `responders.sql` も適用する。詳細は上記の検証記録を参照。
 
 ## 実通知の受信を有効にする前の残作業
 
@@ -40,6 +40,6 @@
 
 `node --test tools/upsider-poc/*.test.mjs`
 
-全69ケースのうち、受信部分は15ケース：正規署名、D1疎通を伴うchallenge応答、偽署名、過去／未来要求、workspace/channelの不一致、未確認送信元、別app/bot、人の投稿、原文保管と再送キー、DB障害、不正JSON、サイズ上限、非公開データの読出し経路なし。D1はスタブで、SQLiteのテーブル作成・一意制約は別途インメモリSQLiteで検証。Workersの実CPU・実Slack配信の試験ではない。
+全78ケースのうち、受信部分は15ケース：正規署名、D1疎通を伴うchallenge応答、偽署名、過去／未来要求、workspace/channelの不一致、未確認送信元、別app/bot、人の投稿、原文保管と再送キー、DB障害、不正JSON、サイズ上限、非公開データの読出し経路なし。D1はスタブで、SQLiteのテーブル作成・一意制約は別途インメモリSQLiteで検証。Workersの実CPU・実Slack配信の試験ではない。
 
 根拠：[Slack署名検証](https://docs.slack.dev/authentication/verifying-requests-from-slack/)、[URL確認](https://docs.slack.dev/reference/events/url_verification/)。

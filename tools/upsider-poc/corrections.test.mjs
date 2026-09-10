@@ -12,6 +12,7 @@ function setup() {
   sqlite.exec(readFileSync(new URL('./schema.sql',import.meta.url),'utf8'));
   sqlite.exec(readFileSync(new URL('./classification.sql',import.meta.url),'utf8'));
   sqlite.exec(readFileSync(new URL('./corrections.sql',import.meta.url),'utf8'));
+  sqlite.exec(readFileSync(new URL('./responders.sql',import.meta.url),'utf8'));
   const db = { prepare(sql) { return { bind(...args) { return {
     async first() { return sqlite.prepare(sql).get(...args) || null; },
     async all() { return {results:sqlite.prepare(sql).all(...args)}; },
@@ -156,4 +157,44 @@ test('rejected signed actor is recorded as actual actor, not card owner',async()
  const receipt=s.sqlite.prepare('SELECT * FROM poc_interaction_receipts').get();
  assert.equal(receipt.actor_id,'UOTHER');assert.equal(receipt.http_status,403);
  assert.equal(current(s).classified_by,'UOWNER');
+});
+
+async function helperReady() {
+  const s=await ready();
+  s.sqlite.prepare('INSERT INTO poc_responders VALUES (?,?,?,1)').run('TTEST','UHELPER','総務担当');
+  s.payload.user={id:'UHELPER'};
+  return s;
+}
+test('registered responder opens and confirms correction; history keeps actual actor and original owner',async()=>{
+  const s=await helperReady(),p=await confirm(s,await open(s));
+  assert.equal((await correctClassification(s.env,p)).status,200);
+  assert.equal(current(s).business_id,'common');assert.equal(current(s).owner_id,'UOWNER');
+  assert.equal(current(s).classified_by,'UHELPER');
+  assert.equal(s.sqlite.prepare('SELECT actor_id FROM poc_classification_revisions').get().actor_id,'UHELPER');
+  assert.equal(s.sqlite.prepare('SELECT user_id FROM poc_classification_audit').get().user_id,'UOWNER');
+});
+test('registered responder cannot open another message or channel',async()=>{
+  for(const mutate of [p=>p.container.message_ts='999.1',p=>p.channel.id='COTHER']) {
+    const s=await helperReady(),p=button(s.payload);mutate(p);
+    assert.equal((await correctClassification(s.env,p,()=>{throw Error('must not call Slack');})).status,403);
+    assert.equal(revisionCount(s),0);
+  }
+});
+test('registered responder cannot take over another actor correction session',async()=>{
+  const s=await ready(),p=await open(s);
+  s.sqlite.prepare('INSERT INTO poc_responders VALUES (?,?,?,1)').run('TTEST','UHELPER','総務担当');
+  p.user={id:'UHELPER'};assert.equal((await correctClassification(s.env,p)).status,403);
+  assert.equal(revisionCount(s),0);
+});
+test('revoking responder access after confirmation prevents correction',async()=>{
+  const s=await helperReady(),p=await confirm(s,await open(s));s.sqlite.exec('UPDATE poc_responders SET enabled=0');
+  assert.equal((await correctClassification(s.env,p)).status,403);
+  assert.equal(revisionCount(s),0);assert.equal(current(s).business_id,'fp');
+});
+test('responder grant revoked immediately before final write cannot commit correction',async()=>{
+  const s=await helperReady(),p=await confirm(s,await open(s));const batch=s.env.DB.batch;
+  s.env.DB.batch=async statements=>{s.sqlite.exec('UPDATE poc_responders SET enabled=0');return batch(statements);};
+  const r=await correctClassification(s.env,p);
+  assert.equal(r.body.view.callback_id,'poc_correct_error');assert.equal(revisionCount(s),0);
+  assert.equal(current(s).business_id,'fp');
 });
