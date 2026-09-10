@@ -38,6 +38,15 @@ CREATE TABLE IF NOT EXISTS poc_classification_audit (
   created_at TEXT NOT NULL,
   PRIMARY KEY(team_id,transaction_id)
 );
+-- Each actual answer, including an answer after an explicitly audited PoC reset.
+CREATE TABLE IF NOT EXISTS poc_classification_answers (
+  team_id TEXT NOT NULL,
+  transaction_id TEXT NOT NULL,
+  classified_at TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  business_id TEXT NOT NULL,
+  PRIMARY KEY(team_id,transaction_id,classified_at)
+);
 CREATE TABLE IF NOT EXISTS poc_slack_outbox (
   team_id TEXT NOT NULL,
   transaction_id TEXT NOT NULL,

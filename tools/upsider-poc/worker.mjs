@@ -1,6 +1,7 @@
 // Independent PoC receiver. No production finance writes or public data reads.
 import { ingestClassification, classify, flushOutbox } from './classification.mjs';
 import { correctClassification } from './corrections.mjs';
+import { runReminderTest } from './reminder-test.mjs';
 const utf8 = new TextEncoder();
 const reply = (body, status = 200) => new Response(body, {
   status, headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' },
@@ -101,6 +102,9 @@ export default {
     }
   },
   async scheduled(controller, env, ctx) {
-    if (env.POC_CLASSIFICATION_ENABLED === 'true') ctx.waitUntil(flushOutbox(env));
+    if (env.POC_CLASSIFICATION_ENABLED === 'true') {
+      ctx.waitUntil(runReminderTest(env,controller.scheduledTime));
+      ctx.waitUntil(flushOutbox(env));
+    }
   },
 };

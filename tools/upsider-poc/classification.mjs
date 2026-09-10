@@ -95,8 +95,12 @@ export async function classify(env, payload) {
     statement(db, `INSERT OR IGNORE INTO poc_classification_audit
       SELECT team_id,transaction_id,classified_by,business_id,classified_at FROM poc_classifications
       WHERE team_id=? AND transaction_id=? AND state='classified'`,row.team_id,id),
-    statement(db, `INSERT OR IGNORE INTO poc_slack_outbox (team_id,transaction_id,kind)
-      SELECT team_id,transaction_id,'update' FROM poc_classifications WHERE team_id=? AND transaction_id=? AND state='classified'`,row.team_id,id),
+    statement(db, `INSERT OR IGNORE INTO poc_classification_answers
+      SELECT team_id,transaction_id,classified_at,classified_by,business_id FROM poc_classifications
+      WHERE team_id=? AND transaction_id=? AND state='classified'`,row.team_id,id),
+    statement(db, `INSERT INTO poc_slack_outbox (team_id,transaction_id,kind)
+      SELECT team_id,transaction_id,'update' FROM poc_classifications WHERE team_id=? AND transaction_id=? AND state='classified'
+      ON CONFLICT(team_id,transaction_id,kind) DO UPDATE SET state='pending' WHERE poc_slack_outbox.state='sent'`,row.team_id,id),
   ]);
   const winner = await statement(db, 'SELECT business_id FROM poc_classifications WHERE team_id=? AND transaction_id=?',row.team_id,id).first();
   return winner?.business_id === business ? 200 : 409;
@@ -105,9 +109,13 @@ export async function classify(env, payload) {
 // Claim once before network I/O. An uncertain send is held for operator review,
 // never automatically re-posted (Slack posting is not a DB transaction).
 export async function flushOutbox(env, send = fetch) {
-  if (env.POC_SLACK_SEND_ENABLED !== 'true' || !env.SLACK_BOT_TOKEN) return;
+  const sendAll=env.POC_SLACK_SEND_ENABLED === 'true';
+  const updateOnly=env.POC_SLACK_UPDATE_ONLY_TRANSACTION_ID;
+  if ((!sendAll && !transactionId.test(updateOnly || '')) || !env.SLACK_BOT_TOKEN) return;
   const db = env.DB;
-  const jobs = await statement(db, "SELECT * FROM poc_slack_outbox WHERE team_id=? AND state='pending' LIMIT 5",env.SLACK_TEAM_ID).all();
+  const jobs = sendAll
+    ? await statement(db, "SELECT * FROM poc_slack_outbox WHERE team_id=? AND state='pending' LIMIT 5",env.SLACK_TEAM_ID).all()
+    : await statement(db, "SELECT * FROM poc_slack_outbox WHERE team_id=? AND transaction_id=? AND kind='update' AND state='pending' LIMIT 1",env.SLACK_TEAM_ID,updateOnly).all();
   for (const job of jobs.results) {
     let row = await statement(db, 'SELECT * FROM poc_classifications WHERE team_id=? AND transaction_id=?',job.team_id,job.transaction_id).first();
     if (!row || row.channel_id !== env.SLACK_CHANNEL_ID || !['pending','classified'].includes(row.state)) continue;
