@@ -7,6 +7,10 @@ const failure = text => result(200, { response_action: 'update', view: {
   close: plain('閉じる'), blocks: [{ type: 'section', text: plain(text) }],
 } });
 const invalid = errors => result(200, { response_action: 'errors', errors });
+const saved = session => ({ ...result(200, { response_action: 'update', view: {
+  type: 'modal', callback_id: 'poc_correct_done', title: plain('修正しました'), close: plain('閉じる'),
+  blocks: [{ type: 'section', text: plain(`修正内容を保存しました。\n変更前：${BUSINESSES[session.expected_business] || session.expected_business}\n変更後：${BUSINESSES[session.business_id]}\n修正理由：${session.reason}`) }],
+} }), saved: true });
 
 export function correctionForm(row, requestId) {
   return { type: 'modal', callback_id: 'poc_correct_edit', private_metadata: requestId,
@@ -70,7 +74,7 @@ export async function correctClassification(env, payload, send = fetch) {
   const session = await q(db,'SELECT * FROM poc_correction_requests WHERE request_id=?',payload.view.private_metadata || '').first();
   if (!session || session.team_id !== env.SLACK_TEAM_ID || session.actor_id !== payload.user.id ||
       !session.view_id || session.view_id !== payload.view.id) return result(403);
-  if (session.stage === 'applied') return payload.view.callback_id === 'poc_correct_confirm' ? result(200) : result(409);
+  if (session.stage === 'applied') return payload.view.callback_id === 'poc_correct_confirm' ? saved(session) : result(409);
   if (session.expires_at < new Date().toISOString()) return failure('入力の有効期限が切れました。投稿から修正をやり直してください。');
   const row = await q(db,'SELECT * FROM poc_classifications WHERE team_id=? AND transaction_id=?',session.team_id,session.transaction_id).first();
   const owner = row && await q(db,'SELECT slack_user_id FROM poc_card_owners WHERE team_id=? AND card_id=? AND enabled=1',row.team_id,row.card_id).first();
@@ -113,7 +117,7 @@ export async function correctClassification(env, payload, send = fetch) {
       SELECT team_id,transaction_id,'update','pending' FROM poc_correction_requests WHERE request_id=? AND stage='applied' AND apply_token=?
       ON CONFLICT(team_id,transaction_id,kind) DO UPDATE SET state='pending' WHERE poc_slack_outbox.state='sent'`,session.request_id,applyToken),
   ]);
-  if (writes[0]?.meta?.changes !== 1 && (await q(db,'SELECT stage FROM poc_correction_requests WHERE request_id=?',session.request_id).first())?.stage === 'applied') return result(200);
+  if (writes[0]?.meta?.changes !== 1 && (await q(db,'SELECT stage FROM poc_correction_requests WHERE request_id=?',session.request_id).first())?.stage === 'applied') return saved(session);
   if (writes[0]?.meta?.changes !== 1) return failure('別の変更、または表示更新の処理中です。最新の投稿を確認してからやり直してください。');
-  return result(200);
+  return saved(session);
 }

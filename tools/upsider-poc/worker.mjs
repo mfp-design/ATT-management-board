@@ -65,7 +65,7 @@ export default {
       if (interaction) {
         if (payload.type === 'view_submission' || payload.actions?.[0]?.action_id === 'poc_correct') {
           const outcome = await correctClassification(env, payload);
-          if (outcome.status === 200 && !outcome.body) ctx?.waitUntil(flushOutbox(env));
+          if (outcome.status === 200 && (!outcome.body || outcome.saved)) ctx?.waitUntil(flushOutbox(env));
           return await interactionReply(env,payload,outcome.status,outcome.body);
         }
         const status = await classify(env, payload);

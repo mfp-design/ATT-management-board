@@ -76,7 +76,11 @@ test('edit and confirmation leave original intact; final submit records before/a
  assert.equal(current(s).business_id,'fp'); assert.equal(revisionCount(s),0);
  // Client cannot override the confirmed business or reason in the final request.
  submit.view.state.values.business.business.selected_option.value='sake';
- assert.equal((await correctClassification(s.env,submit)).status,200);
+ const completed=await correctClassification(s.env,submit);
+ assert.equal(completed.status,200);assert.equal(completed.saved,true);
+ assert.equal(completed.body.response_action,'update');assert.equal(completed.body.view.title.text,'修正しました');
+ assert.match(completed.body.view.blocks[0].text.text,/変更後：全社共通/);
+ assert.equal(completed.body.view.close.text,'閉じる');assert.equal(completed.body.view.submit,undefined);
  assert.equal(current(s).business_id,'common');
  assert.equal(current(s).classified_by,'UOWNER');
  const audit=s.sqlite.prepare('SELECT * FROM poc_classification_revisions').get();
@@ -85,7 +89,8 @@ test('edit and confirmation leave original intact; final submit records before/a
  assert.equal(s.sqlite.prepare('SELECT COUNT(*) n FROM poc_classification_audit').get().n,1);
  assert.equal(s.sqlite.prepare("SELECT state FROM poc_slack_outbox WHERE kind='update'").get().state,'pending');
  s.sqlite.exec("UPDATE poc_slack_outbox SET state='sent'");
- assert.equal((await correctClassification(s.env,submit)).status,200);
+ const replay=await correctClassification(s.env,submit);
+ assert.equal(replay.status,200);assert.equal(replay.body.view.callback_id,'poc_correct_done');
  assert.equal(revisionCount(s),1);assert.equal(s.sqlite.prepare('SELECT state FROM poc_slack_outbox').get().state,'sent');
 });
 for(const [label,mutate] of [
@@ -197,4 +202,19 @@ test('responder grant revoked immediately before final write cannot commit corre
   const r=await correctClassification(s.env,p);
   assert.equal(r.body.view.callback_id,'poc_correct_error');assert.equal(revisionCount(s),0);
   assert.equal(current(s).business_id,'fp');
+});
+
+test('signed correction returns private success view and schedules queued display update',async()=>{
+  const s=await helperReady(),p=await confirm(s,await open(s));
+  s.env.POC_SLACK_SEND_ENABLED='false';
+  const raw=new URLSearchParams({payload:JSON.stringify(p)}).toString(),ts=String(Math.floor(Date.now()/1000));
+  const sig=createHmac('sha256','test-secret').update(`v0:${ts}:${raw}`).digest('hex');
+  const tasks=[];
+  const r=await worker.fetch(new Request('https://example.test/slack/interactions',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded','x-slack-request-timestamp':ts,'x-slack-signature':`v0=${sig}`},body:raw}),s.env,{waitUntil(task){tasks.push(task);}});
+  assert.equal(r.status,200);const body=await r.json();
+  assert.equal(body.response_action,'update');assert.equal(body.view.callback_id,'poc_correct_done');
+  assert.equal(tasks.length,1);await Promise.all(tasks);
+  assert.equal(current(s).business_id,'common');assert.equal(revisionCount(s),1);
+  const receipt=s.sqlite.prepare('SELECT * FROM poc_interaction_receipts').get();
+  assert.equal(receipt.actor_id,'UHELPER');assert.equal(receipt.http_status,200);assert.equal(receipt.response_action,'update');
 });
