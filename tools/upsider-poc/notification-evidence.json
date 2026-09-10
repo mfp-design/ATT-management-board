@@ -1,0 +1,70 @@
+{
+  "measured_at": "2026-09-10T22:55:45.230Z",
+  "stored": {
+    "events": 14,
+    "verified_sources": 14,
+    "types": {
+      "message:none": 14
+    },
+    "empty_text": 10,
+    "parse_counts": {
+      "unsupported_structure": 4,
+      "normal_candidate": 9,
+      "conflicting_transaction_id": 1
+    },
+    "distinct_cards": 4,
+    "distinct_transactions": 9,
+    "required_field_candidates": 9,
+    "slack_to_storage": {
+      "n": 14,
+      "min_ms": 278,
+      "median_ms": 333,
+      "max_ms": 832
+    },
+    "usage_to_storage_assuming_jst": {
+      "n": 9,
+      "min_ms": -3378,
+      "median_ms": 1941,
+      "max_ms": 2628
+    }
+  },
+  "history": {
+    "window_from": "2026-09-08T22:55:45.230Z",
+    "window_to": "2026-09-10T22:55:45.230Z",
+    "complete": true,
+    "messages": 13,
+    "official_parent_messages": 13,
+    "matched": 10,
+    "missing": 3,
+    "parsed_value_changed": 0,
+    "normal_candidates": 12,
+    "parse_reasons": {
+      "conflicting_transaction_id": 1
+    }
+  },
+  "api_calls": [
+    {
+      "method": "conversations.history",
+      "http": 200,
+      "ok": true,
+      "error": null
+    }
+  ],
+  "replies_sample": {
+    "http": 200,
+    "ok": true,
+    "error": null,
+    "complete": true,
+    "messages": 2,
+    "official_replies": 1
+  },
+  "control_free_notice_validation": {
+    "original_reason": "conflicting_transaction_id",
+    "memo_button_count": 0,
+    "transaction_url_label_match": true,
+    "after_fix": "parsed_candidate",
+    "required_fields_present": true,
+    "database_reprocessed": false
+  },
+  "scope": "Read-only PoC observation. No raw bodies, merchants, amounts, card IDs, transaction IDs, or individual message references."
+}

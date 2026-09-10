@@ -54,6 +54,29 @@ test('conflicting button ID does not produce a transaction', () => {
   const event = sample(); event.attachments[0].blocks[1].accessory.value = cardId;
   assert.equal(parseNotification(event).reason, 'conflicting_transaction_id');
 });
+test('observed normal notice without interactive controls uses matching transaction URL and label',()=>{
+  const event=sample(),expected=parseNotification(event);
+  delete event.attachments[0].blocks[1].accessory;
+  assert.deepEqual(parseNotification(event),expected);
+});
+test('without a memo button, inconsistent transaction URL and label still require review',()=>{
+  const event=sample();delete event.attachments[0].blocks[1].accessory;
+  event.attachments[0].blocks[4].elements[2].text=`決済ID: <https://up-sider.com/user-cards/${cardId}/transactions/${txnId}|${cardId}>`;
+  assert.equal(parseNotification(event).reason,'conflicting_transaction_id');
+});
+test('multiple memo buttons still require review',()=>{
+  const event=sample();event.attachments[0].blocks.push({...event.attachments[0].blocks[1],fields:[]});
+  assert.equal(parseNotification(event).reason,'conflicting_transaction_id');
+});
+test('unverified controls are not treated as the observed control-free variant',()=>{
+  for(const relocated of [false,true]){
+    const event=sample(),button=event.attachments[0].blocks[1].accessory;
+    delete event.attachments[0].blocks[1].accessory;
+    if(relocated)event.attachments[0].blocks.push({type:'actions',elements:[button]});
+    else event.attachments[0].blocks[1].accessory={...button,action_id:'unknown_action'};
+    assert.equal(parseNotification(event).reason,'conflicting_transaction_id');
+  }
+});
 test('edited/deleted messages, malformed payloads and multiple attachments require review', () => {
   for (const event of [null, {}, { ...sample(), subtype: 'message_changed' },
     { ...sample(), subtype: 'message_deleted' }, { ...sample(), attachments: [null] },

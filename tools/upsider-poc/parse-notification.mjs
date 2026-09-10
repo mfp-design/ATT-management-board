@@ -39,8 +39,13 @@ export function parseNotification(event) {
   const [, cardId, transactionId, labelId] = transaction;
   const buttons = blocks.map(b => b?.accessory).filter(b => b?.type === 'button' &&
     typeof b.action_id === 'string' && b.action_id.startsWith('add_txn_memo-'));
-  if (labelId !== transactionId || buttons.length !== 1 ||
-      buttons[0].value !== transactionId || buttons[0].action_id !== `add_txn_memo-${transactionId}`)
+  // A captured normal notification has no interactive controls at all. Its
+  // matching transaction URL/label remains the identifier; a memo button is optional.
+  // Do not generalize this to unknown or relocated controls without evidence.
+  const withoutControls = !blocks.some(b => b?.accessory || b?.type === 'actions' ||
+    (Array.isArray(b?.elements) && b.elements.some(e => e?.type === 'button')));
+  if (labelId !== transactionId || (buttons.length !== 1 && !withoutControls) ||
+      (buttons.length === 1 && (buttons[0].value !== transactionId || buttons[0].action_id !== `add_txn_memo-${transactionId}`)))
     return pending('conflicting_transaction_id');
   return {
     status: 'parsed_candidate',

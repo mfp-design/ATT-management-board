@@ -1,4 +1,4 @@
-> 最新の配置・予約状況は [9月11日の再通知テスト](reminder-review.md) を参照。指定の1件を未回答へ戻し、9月11日10時の再通知を予約済み。一般の自動送信は停止中で、対象1件の回答後の表示更新だけを有効化している。
+> 最新の配置と実証結果は [通知の実証記録](notification-review.md) を参照。ボタンなし通常通知への対応を反映済み。[9月11日10時の1件限定再通知テスト](reminder-review.md) は予約を維持している。
 
 # UPSIDER受信PoC：URL確認と原文保管の基礎
 
@@ -40,6 +40,6 @@
 
 `node --test tools/upsider-poc/*.test.mjs`
 
-全110ケースのうち、受信部分は15ケース：正規署名、D1疎通を伴うchallenge応答、偽署名、過去／未来要求、workspace/channelの不一致、未確認送信元、別app/bot、人の投稿、原文保管と再送キー、DB障害、不正JSON、サイズ上限、非公開データの読出し経路なし。D1はスタブで、SQLiteのテーブル作成・一意制約は別途インメモリSQLiteで検証。Workersの実CPU・実Slack配信の試験ではない。
+全114ケースのうち、受信部分は15ケース：正規署名、D1疎通を伴うchallenge応答、偽署名、過去／未来要求、workspace/channelの不一致、未確認送信元、別app/bot、人の投稿、原文保管と再送キー、DB障害、不正JSON、サイズ上限、非公開データの読出し経路なし。D1はスタブで、SQLiteのテーブル作成・一意制約は別途インメモリSQLiteで検証。Workersの実CPU・実Slack配信の試験ではない。
 
 根拠：[Slack署名検証](https://docs.slack.dev/authentication/verifying-requests-from-slack/)、[URL確認](https://docs.slack.dev/reference/events/url_verification/)。
