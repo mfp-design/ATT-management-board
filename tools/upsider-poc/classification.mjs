@@ -115,10 +115,14 @@ export async function flushOutbox(env, send = fetch) {
       const responder = job.kind === 'update' && row.classified_by !== owner.slack_user_id
         ? await statement(db,'SELECT display_name FROM poc_responders WHERE team_id=? AND slack_user_id=?',row.team_id,row.classified_by).first() : null;
       const responderName = row.classified_by === owner.slack_user_id ? (owner.owner_name || row.classified_by) : (responder?.display_name || row.classified_by);
+      const revision = job.kind === 'update' ? await statement(db, `SELECT reason FROM poc_classification_revisions
+        WHERE team_id=? AND transaction_id=? AND after_business=? AND actor_id=? AND created_at=?
+        ORDER BY rowid DESC LIMIT 1`,row.team_id,row.transaction_id,row.business_id,row.classified_by,row.classified_at).first() : null;
       const body = job.kind === 'prompt' ? promptMessage(row) : {
         channel:row.channel_id, ts:row.prompt_ts,
         text:`【検証】分類済み：${BUSINESSES[row.business_id]}`,
         blocks:[{type:'section',text:{type:'plain_text',text:`【検証】分類済み：${BUSINESSES[row.business_id]}（回答者：${responderName}）`,emoji:false}},
+          ...(revision ? [{type:'section',text:{type:'plain_text',text:`修正理由：${revision.reason}`,emoji:false}}] : []),
           {type:'actions',block_id:`correct:${row.transaction_id}`,elements:[{type:'button',action_id:'poc_correct',value:row.transaction_id,text:{type:'plain_text',text:'回答を修正する'}}]}],
       };
       const response = await send(`https://slack.com/api/${job.kind === 'prompt' ? 'chat.postMessage' : 'chat.update'}`, {
