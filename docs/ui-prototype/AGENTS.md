@@ -4,7 +4,7 @@
 
 - Issue #13のローカル画面案。現在の要件は `../requirements/management-board-rebuild.md`、見た目の基準は `../visual-reference/README.md` と保存画像を参照する。
 - 既存の紺色・書体を継承し、コードと情報構造は現在の要件から組み直す。架空データを使用し、実システム・UPSIDER PoCには接続しない。
-- 2026年9月11日はユーザーの外出に合わせて作成途中で中断。再開時は `README.md`、`screen-inventory.md`、`design-qa.md` を先に読む。
+- 2026年9月11日に一次レビュー用の画面案を整備。継続時は `README.md`、`review-guide.md`、`screen-inventory.md`、`design-qa.md` を先に読む。CSV内容・コピーと印刷プレビューは確認済みだが、ファイル保存・OS印刷は未確認。
 - 要件責任者・役員の二段階確認は未実施。全画面・状態の完成やIssue #13の完了を主張しない。
 
 Run the local server yourself and open the preview in the browser available to this environment. Do not give the user server-start instructions when you can run it.

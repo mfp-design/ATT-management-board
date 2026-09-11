@@ -7,6 +7,10 @@ export const seedDeals = [
  {id:'D-003',name:'管理職研修 秋季プログラム',account:'サンプル工業',business:'企業研修',member:'担当C',stage:'成約',amount:420000,due:'2026-09-05',revenueDate:'2026-09-10'},
  {id:'D-004',name:'物件活用コンサルティング',account:'サンプル不動産',business:'自社不動産事業',member:'担当A',stage:'アプローチ',amount:240000,due:'2026-09-27',revenueDate:'2026-09-30'}
 ];
+seedDeals.push(
+ {id:'D-005',name:'保険相談 継続サポート',account:'サンプル商事',business:'FP事業',member:'担当A',stage:'成約',amount:280000,due:'2026-09-02',revenueDate:'2026-09-04'},
+ {id:'D-006',name:'秋季イベント運営',account:'サンプル企画',business:'MoneRun',member:'担当B',stage:'成約',amount:220000,due:'2026-09-08',revenueDate:'2026-09-22'}
+);
 export const seedRevenue = [
  {id:'R-001',deal:'D-003',name:'管理職研修 秋季プログラム',business:'企業研修',member:'担当C',amount:420000,date:'2026-09-10',booked:true,invoiced:420000,paid:0,invoiceDate:'2026-09-10',paidDate:'',mode:'一括'},
  {id:'R-002',deal:'D-005',name:'保険相談 継続サポート',business:'FP事業',member:'担当A',amount:280000,date:'2026-09-04',booked:true,invoiced:280000,paid:280000,invoiceDate:'2026-09-04',paidDate:'2026-09-08',mode:'一括'},
