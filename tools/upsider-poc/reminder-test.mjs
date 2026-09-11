@@ -15,7 +15,7 @@ async function reminderRow(env,test) {
     test.team_id,test.transaction_id).first();
   if (!row || row.team_id !== env.SLACK_TEAM_ID || row.channel_id !== env.SLACK_CHANNEL_ID ||
       row.channel_id !== test.channel_id || row.source_ts !== test.source_ts || row.prompt_ts !== test.prompt_ts ||
-      row.state !== 'pending' || mentionUserId(row,env) !== test.recipient_id) return null;
+      row.state !== 'pending' || mentionUserId(row) !== test.recipient_id) return null;
   const data = JSON.parse(row.details);
   const date = data.occurredAtLocal?.slice(0,10).replaceAll('/','-');
   if (data.currency !== 'JPY' || data.timezone !== 'Asia/Tokyo' ||
@@ -41,7 +41,7 @@ export async function prepareReminderTest(env,spec,now=Date.now()) {
   const row = await reminderQuery(env.DB,'SELECT * FROM poc_classifications WHERE team_id=? AND transaction_id=?',
     env.SLACK_TEAM_ID,spec.transactionId).first();
   if (!row || row.state !== 'classified' || row.classified_at !== spec.expectedClassifiedAt ||
-      row.channel_id !== env.SLACK_CHANNEL_ID || !/^\d+\.\d+$/.test(row.prompt_ts || '') || !mentionUserId(row,env))
+      row.channel_id !== env.SLACK_CHANNEL_ID || !/^\d+\.\d+$/.test(row.prompt_ts || '') || !mentionUserId(row))
     throw Error('Classification changed or is not ready');
   const token = crypto.randomUUID();
   const resetAt = new Date(now).toISOString();
@@ -53,7 +53,7 @@ export async function prepareReminderTest(env,spec,now=Date.now()) {
       WHERE c.team_id=? AND c.transaction_id=? AND c.state='classified' AND c.classified_at=?
         AND c.channel_id=? AND c.prompt_ts=? AND o.enabled=1 AND o.slack_user_id IS c.owner_id
         AND NOT EXISTS (SELECT 1 FROM poc_slack_outbox b WHERE b.team_id=c.team_id AND b.transaction_id=c.transaction_id
-          AND b.state!='sent')`,spec.testId,spec.runDate,mentionUserId(row,env),JSON.stringify(row),resetAt,token,
+          AND b.state!='sent')`,spec.testId,spec.runDate,mentionUserId(row),JSON.stringify(row),resetAt,token,
       row.team_id,row.transaction_id,row.classified_at,row.channel_id,row.prompt_ts),
     reminderQuery(env.DB,`UPDATE poc_classifications SET state='pending',business_id=NULL,classified_by=NULL,classified_at=NULL
       WHERE team_id=? AND transaction_id=? AND state='classified' AND classified_at=?
@@ -72,7 +72,7 @@ export async function showPendingReminderTest(env,send=fetch) {
   const claim = await reminderQuery(env.DB,"UPDATE poc_reminder_tests SET state='resetting' WHERE test_id=? AND state='prepared'",test.test_id).run();
   if (!reminderChanged(claim)) return;
   try {
-    const body = promptMessage(row,env);
+    const body = promptMessage(row);
     delete body.thread_ts;
     body.ts=row.prompt_ts;
     body.text='【検証】未回答：経費の対象事業を選択してください。';

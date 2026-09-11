@@ -1,9 +1,9 @@
-> 最新の配置と実証結果は [通知の実証記録](notification-review.md) を参照。ボタンなし通常通知への対応を反映済み。[9月11日10時の1件限定再通知テスト](reminder-review.md) は予約を維持している。
+> 最新の配置・送信設定は [カード本人への通知切替](owner-routing-review.md) を参照。集約設定は削除済みで、本人への分類依頼と回答後の表示更新を有効化した。通常通知の形式は [通知の実証記録](notification-review.md)、9月11日再通知の未確認事項は [再通知テスト](reminder-review.md) を参照。
 
 # UPSIDER受信PoC：URL確認と原文保管の基礎
 
 2026-09-09 / #9・#10。受信・原文保存はCloudflareで実通知5件の保存を確認済み。
-分類・登録確認・回答修正はCloudflare配置済み。分類処理は有効。一般のSlack送信は無効で、上記の1件限定テストを有効化した。初期の経緯は [分類検証手順](classification-review.md)。
+分類・登録確認・回答修正はCloudflare配置済み。2026-09-11、本人対応4枚を登録済みとし、一般のSlack送信を有効化した。未送信9件を本人宛てに送信済み。1件限定の再通知テストとそのCronは無効化した。初期の経緯は [分類検証手順](classification-review.md)。
 
 ## 現在の対象
 
@@ -11,7 +11,7 @@
 - URL: https://att-upsider-poc.tiny-smoke-00b7.workers.dev/
 - D1: att-upsider-poc-db、バインディング: DB
 - Slack: T0BV7K8H95K / C0BVAA7G1DK、独自アプリ: ATT UPSIDER PoC
-- 署名用Secret: SLACK_SIGNING_SECRET、投稿用Secret: SLACK_BOT_TOKEN（この受信基礎ではまだ使用しない）
+- 署名用Secret: SLACK_SIGNING_SECRET、投稿用Secret: SLACK_BOT_TOKEN
 - Text: SLACK_TEAM_ID / SLACK_CHANNEL_ID
 
 ## 配置する手順

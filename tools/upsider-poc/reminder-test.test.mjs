@@ -46,7 +46,6 @@ async function prepare() {
   s.sqlite.prepare('UPDATE poc_classification_audit SET created_at=?').run(originalAt);
   s.sqlite.exec("UPDATE poc_slack_outbox SET state='sent'");
   s.env.POC_REMINDER_TEST_ID='test-september';s.env.POC_REMINDER_TEST_ENABLED='true';
-  s.env.POC_MENTION_USER_ID='UTESTER';
   s.spec={testId:'test-september',transactionId:txn,runDate:'2026-09-11',expectedClassifiedAt:row(s).classified_at};
   s.original={...row(s)};
   await prepareReminderTest(s.env,s.spec,before);
@@ -116,7 +115,7 @@ test('one reminder in original thread with mention and original answer link; dup
   await Promise.all([runReminderTest(s.env,due,network(calls),due),runReminderTest(s.env,due,network(calls),due)]);
   await runReminderTest(s.env,due,network(calls),due);
   assert.equal(calls.length,2);assert.equal(record(s).state,'sent');assert.equal(record(s).message_ts,'102.1');
-  const body=calls[1].body;assert.equal(body.thread_ts,'100.1');assert.match(body.text,/<@UTESTER>/);
+  const body=calls[1].body;assert.equal(body.thread_ts,'100.1');assert.match(body.text,/<@UOWNER>/);
   assert.match(body.blocks[2].text.text,/p1011/);assert.equal(body.reply_broadcast,false);
   assert.equal(body.blocks[1].text.type,'plain_text');
 });
@@ -141,7 +140,7 @@ test(kind+' is skipped before sending',async()=>{
   if(kind==='review')s.sqlite.exec("UPDATE poc_classifications SET state='review_required'");
   if(kind==='disabled_card')s.sqlite.exec('UPDATE poc_card_owners SET enabled=0');
   if(kind==='owner_changed')s.sqlite.exec("UPDATE poc_card_owners SET slack_user_id='UCHANGED'");
-  if(kind==='recipient_changed')s.env.POC_MENTION_USER_ID='UCHANGED';
+  if(kind==='recipient_changed'){s.sqlite.exec("UPDATE poc_card_owners SET slack_user_id='UCHANGED'; UPDATE poc_classifications SET owner_id='UCHANGED'");}
   if(kind==='same_day'){
     const data=JSON.parse(row(s).details);data.occurredAtLocal='2026/09/11 00:00:00';
     s.sqlite.prepare('UPDATE poc_classifications SET details=?').run(JSON.stringify(data));
@@ -188,7 +187,8 @@ test('answer after reset is audited and updates only that expense while global s
   assert.equal(calls,1);
   assert.equal(s.sqlite.prepare("SELECT COUNT(*) n FROM poc_slack_outbox WHERE state='pending'").get().n,2);
 });
-test('scheduled handler invokes the date-guarded test without exposing a public reset route',async()=>{
+test('scheduled handler invokes the date-guarded test without exposing a public reset route',async(t)=>{
+  t.mock.method(Date,'now',()=>due-60000);
   const s=await armed(),jobs=[];s.env.POC_SLACK_SEND_ENABLED='false';
   await worker.scheduled({scheduledTime:due-60000},s.env,{waitUntil(p){jobs.push(p);}});
   await Promise.all(jobs);assert.equal(record(s).state,'armed');

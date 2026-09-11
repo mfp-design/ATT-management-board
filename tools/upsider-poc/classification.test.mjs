@@ -153,52 +153,44 @@ test('responder revoked immediately before classification write cannot commit',a
   assert.equal(s.sqlite.prepare('SELECT COUNT(*) n FROM poc_classification_audit').get().n,0);
 });
 
-test('PoC mention override preserves card owner and reverts when removed',()=>{
+test('each prompt mentions its persisted card owner',()=>{
   const s=setup(),row=s.sqlite.prepare('SELECT * FROM poc_classifications').get();
-  s.env.POC_MENTION_USER_ID='UTESTER';
-  assert.match(promptMessage(row,s.env).blocks[0].text.text,/<@UTESTER>/);
-  assert.equal(row.owner_id,'UOWNER');
-  delete s.env.POC_MENTION_USER_ID;
-  assert.match(promptMessage(row,s.env).blocks[0].text.text,/<@UOWNER>/);
+  for(const owner of ['UOWNER','USECOND']) {
+    const body=promptMessage({...row,owner_id:owner});
+    assert.equal(body.blocks[0].text.text,`<@${owner}> 【検証】この決済の対象事業を選択してください。`);
+  }
 });
-test('known card without owner Slack ID can be routed and answered by registered tester',async()=>{
+test('known card without a Slack owner stays held even with a registered helper',async()=>{
   const s=setup();s.sqlite.exec('DELETE FROM poc_classifications');
-  s.env.POC_MENTION_USER_ID='UTESTER';
   s.sqlite.prepare('INSERT INTO poc_card_owners VALUES (?,?,?,?,?,1)').run('TTEST','11111111-1111-4111-8111-111111111111','TEST CARD','実カード利用者',null);
-  s.sqlite.prepare('INSERT INTO poc_responders VALUES (?,?,?,1)').run('TTEST','UTESTER','検証担当');
+  s.sqlite.prepare('INSERT INTO poc_responders VALUES (?,?,?,1)').run('TTEST','UHELPER','追加回答者');
   await ingestClassification(s.env,notice());
-  let row=s.sqlite.prepare('SELECT * FROM poc_classifications').get();
-  assert.equal(row.owner_id,null);assert.equal(row.state,'pending');
-  let prompt;
-  await flushOutbox(s.env,async(url,req)=>{assert.match(url,/chat.postMessage$/);prompt=JSON.parse(req.body);return Response.json({ok:true,channel:'CTEST',ts:'101.1'});});
-  assert.match(prompt.blocks[0].text.text,/<@UTESTER>/);
-  s.payload.user={id:'UTESTER'};s.payload.message.thread_ts='200.1';
-  assert.equal(await classify(s.env,s.payload),200);
-  row=s.sqlite.prepare('SELECT * FROM poc_classifications').get();
-  assert.equal(row.owner_id,null);assert.equal(row.classified_by,'UTESTER');
-  assert.equal(JSON.parse(row.details).cardName,'TEST CARD');
-  let completion;
-  await flushOutbox(s.env,async(url,req)=>{assert.match(url,/chat.update$/);completion=JSON.parse(req.body);return Response.json({ok:true,channel:'CTEST',ts:'101.1'});});
-  assert.match(completion.blocks[0].text.text,/回答者：検証担当/);
-  assert.doesNotMatch(completion.blocks[0].text.text,/実カード利用者/);
+  const row=s.sqlite.prepare('SELECT * FROM poc_classifications').get();
+  assert.equal(row.owner_id,null);assert.equal(row.state,'unmapped');
+  assert.equal(s.sqlite.prepare('SELECT COUNT(*) n FROM poc_slack_outbox').get().n,0);
+  await flushOutbox(s.env,()=>{throw Error('must not send');});
 });
-test('mention override never authorizes its recipient on its own',async()=>{
-  const s=setup();s.env.POC_MENTION_USER_ID='UTESTER';s.payload.user={id:'UTESTER'};
+test('an unregistered colleague cannot classify another owner card',async()=>{
+  const s=setup();s.payload.user={id:'UOTHER'};
   assert.equal(await classify(s.env,s.payload),403);
 });
-test('unknown and disabled cards remain held under mention override',async()=>{
+test('unknown and disabled cards remain held with direct owner routing',async()=>{
   for(const disabled of [false,true]) {
-    const s=setup();s.sqlite.exec('DELETE FROM poc_classifications');s.env.POC_MENTION_USER_ID='UTESTER';
-    if(disabled)s.sqlite.prepare('INSERT INTO poc_card_owners VALUES (?,?,?,?,?,0)').run('TTEST','11111111-1111-4111-8111-111111111111','TEST CARD','利用者',null);
+    const s=setup();s.sqlite.exec('DELETE FROM poc_classifications');
+    if(disabled)s.sqlite.prepare('INSERT INTO poc_card_owners VALUES (?,?,?,?,?,0)').run('TTEST','11111111-1111-4111-8111-111111111111','TEST CARD','利用者','UOWNER');
     await ingestClassification(s.env,notice());
     assert.equal(s.sqlite.prepare('SELECT state FROM poc_classifications').get().state,'unmapped');
     assert.equal(s.sqlite.prepare('SELECT COUNT(*) n FROM poc_slack_outbox').get().n,0);
   }
 });
-test('invalid mention override does not fall back to a different recipient or send',async()=>{
-  const s=setup();s.env.POC_MENTION_USER_ID='invalid <@UOTHER>';
-  s.sqlite.prepare("INSERT INTO poc_slack_outbox VALUES (?,?,'prompt','pending')").run('TTEST',txn);
-  assert.throws(()=>promptMessage(s.sqlite.prepare('SELECT * FROM poc_classifications').get(),s.env));
-  await flushOutbox(s.env,()=>{throw Error('must not send');});
-  assert.equal(s.sqlite.prepare('SELECT state FROM poc_slack_outbox').get().state,'pending');
+test('missing or invalid persisted owner never produces a mention or a send',async()=>{
+  for(const owner of [null,'invalid <@UOTHER>']) {
+    const s=setup();
+    s.sqlite.prepare('UPDATE poc_classifications SET owner_id=?').run(owner);
+    s.sqlite.prepare('UPDATE poc_card_owners SET slack_user_id=?').run(owner);
+    s.sqlite.prepare("INSERT INTO poc_slack_outbox VALUES (?,?,'prompt','pending')").run('TTEST',txn);
+    assert.throws(()=>promptMessage(s.sqlite.prepare('SELECT * FROM poc_classifications').get()));
+    await flushOutbox(s.env,()=>{throw Error('must not send');});
+    assert.equal(s.sqlite.prepare('SELECT state FROM poc_slack_outbox').get().state,'pending');
+  }
 });
