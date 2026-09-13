@@ -58,7 +58,7 @@ async function armed() {
     const body=JSON.parse(req.body);assert.equal(body.ts,'101.1');assert.equal(body.thread_ts,undefined);
     assert.doesNotMatch(body.text,/<@/);assert.doesNotMatch(body.blocks[0].text.text,/<@/);
     assert.equal(body.blocks[1].text.type,'plain_text');
-    assert.equal(body.blocks[2].elements[0].options.length,9);
+    assert.equal(body.blocks[2].elements[0].options.length,10);
     return Response.json({ok:true,channel:'CTEST',ts:'101.1'});
   });
   return s;

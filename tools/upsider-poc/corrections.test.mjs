@@ -39,7 +39,7 @@ async function ready() {
  return state;
 }
 function button(payload) { return {...payload,trigger_id:'trigger-test',actions:[{type:'button',action_id:'poc_correct',block_id:`correct:${txn}`,value:txn}]}; }
-async function open(state) {
+async function open(state,business='common') {
  let view;
  const r=await correctClassification(state.env,button(state.payload),async(url,req)=>{
   assert.equal(url,'https://slack.com/api/views.open'); view=JSON.parse(req.body).view;
@@ -48,7 +48,7 @@ async function open(state) {
  assert.equal(r.status,200);
  return {type:'view_submission',team:state.payload.team,api_app_id:'ATEST',user:state.payload.user,
   view:{id:'VTEST',callback_id:'poc_correct_edit',private_metadata:view.private_metadata,state:{values:{
-   business:{business:{selected_option:{value:'common'}}},reason:{reason:{value:'誤って選択したため'}}
+   business:{business:{selected_option:{value:business}}},reason:{reason:{value:'誤って選択したため'}}
   }}}};
 }
 async function confirm(state,payload) {
@@ -70,7 +70,7 @@ test('initial selection requires confirmation; completion has correction button 
  assert.equal(body.blocks[1].elements[0].text.text,'回答を修正する');
 });
 test('edit and confirmation leave original intact; final submit records before/after and actual actor once',async()=>{
- const s=await ready(), p=await open(s);
+ const s=await ready(), p=await open(s,'japan_design');
  assert.equal(current(s).business_id,'fp');
  const submit=await confirm(s,p);
  assert.equal(current(s).business_id,'fp'); assert.equal(revisionCount(s),0);
@@ -79,12 +79,12 @@ test('edit and confirmation leave original intact; final submit records before/a
  const completed=await correctClassification(s.env,submit);
  assert.equal(completed.status,200);assert.equal(completed.saved,true);
  assert.equal(completed.body.response_action,'update');assert.equal(completed.body.view.title.text,'修正しました');
- assert.match(completed.body.view.blocks[0].text.text,/変更後：全社共通/);
+ assert.match(completed.body.view.blocks[0].text.text,/変更後：日本デザイン/);
  assert.equal(completed.body.view.close.text,'閉じる');assert.equal(completed.body.view.submit,undefined);
- assert.equal(current(s).business_id,'common');
+ assert.equal(current(s).business_id,'japan_design');
  assert.equal(current(s).classified_by,'UOWNER');
  const audit=s.sqlite.prepare('SELECT * FROM poc_classification_revisions').get();
- assert.equal(audit.before_business,'fp');assert.equal(audit.after_business,'common');assert.equal(audit.actor_id,'UOWNER');
+ assert.equal(audit.before_business,'fp');assert.equal(audit.after_business,'japan_design');assert.equal(audit.actor_id,'UOWNER');
  assert.equal(audit.reason,'誤って選択したため');
  assert.equal(s.sqlite.prepare('SELECT COUNT(*) n FROM poc_classification_audit').get().n,1);
  assert.equal(s.sqlite.prepare("SELECT state FROM poc_slack_outbox WHERE kind='update'").get().state,'pending');

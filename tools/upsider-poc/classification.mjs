@@ -1,5 +1,5 @@
 import { parseNotification } from './parse-notification.mjs';
-export const BUSINESSES = Object.freeze({ fp: 'FP事業', monerun: 'MoneRun', agerun: 'Agerun', real_estate: '自社不動産事業', sake: '日本酒', trust_salon: 'トラストサロン', building_maintenance: 'ビルメンテナンス', corporate_training: '企業研修', common: '全社共通' });
+export const BUSINESSES = Object.freeze({ fp: 'FP事業', monerun: 'MoneRun', agerun: 'Agerun', real_estate: '自社不動産事業', japan_design: '日本デザイン', sake: '日本酒', trust_salon: 'トラストサロン', building_maintenance: 'ビルメンテナンス', corporate_training: '企業研修', common: '全社共通' });
 const userId = /^U[A-Z0-9]+$/;
 const transactionId = /^[0-9a-f-]{36}$/i;
 const changed = r => r?.meta?.changes === 1;

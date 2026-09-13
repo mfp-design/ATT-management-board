@@ -7,6 +7,8 @@
 
 ## 現在の対象
 
+2026-09-13：経費の事業選択に「日本デザイン」を追加。「自社不動産事業 → 日本デザイン → 日本酒」の順で、初回登録・回答修正の両方に適用した。配信版は `7b1ac341-af33-483e-bf87-f3f6f248df68`。投稿済みの未回答4件も `chat.update` で更新し、全件のAPI応答で10項目の順序を確認済み。新規投稿と回答データの変更は行っていない。ローカル114ケース成功。
+
 - Worker: att-upsider-poc（Workers Free）
 - URL: https://att-upsider-poc.tiny-smoke-00b7.workers.dev/
 - D1: att-upsider-poc-db、バインディング: DB

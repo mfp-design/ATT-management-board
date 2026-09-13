@@ -33,11 +33,12 @@ function setup() {
 }
 test('owner classification, duplicate delivery, conflicting answer and audit',async()=>{
   const {sqlite,env,payload}=setup();
+  payload.actions[0].selected_option.value='japan_design';
   assert.equal(await classify(env,payload),200);
   assert.equal(await classify(env,payload),200);
   payload.actions[0].selected_option.value='common'; assert.equal(await classify(env,payload),409);
   assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM poc_classification_audit').get().n,1);
-  assert.equal(sqlite.prepare('SELECT business_id FROM poc_classifications').get().business_id,'fp');
+  assert.equal(sqlite.prepare('SELECT business_id FROM poc_classifications').get().business_id,'japan_design');
   assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM poc_slack_outbox').get().n,1);
 });
 for (const [label,mutate] of [
@@ -57,7 +58,7 @@ test('UI mentions only owner, untrusted merchant rendered as plain text',()=>{
   const {sqlite}=setup(); const body=promptMessage(sqlite.prepare('SELECT * FROM poc_classifications').get());
   assert.match(body.blocks[0].text.text,/<@UOWNER>/);
   assert.equal(body.blocks[1].text.type,'plain_text');
-  assert.deepEqual(body.blocks[2].elements[0].options.map(option => option.text.text), ['FP事業','MoneRun','Agerun','自社不動産事業','日本酒','トラストサロン','ビルメンテナンス','企業研修','全社共通']);
+  assert.deepEqual(body.blocks[2].elements[0].options.map(option => option.text.text), ['FP事業','MoneRun','Agerun','自社不動産事業','日本デザイン','日本酒','トラストサロン','ビルメンテナンス','企業研修','全社共通']);
 });
 test('send disabled performs no network calls',async()=>{
   const {env}=setup(); env.POC_SLACK_SEND_ENABLED='false';
