@@ -1,6 +1,7 @@
 import React from 'react';
+import {formatMoney, relinkAccounts} from './prototype-model.js';
 
-export const yen = n => '¥' + Number(n).toLocaleString('ja-JP');
+export const yen = formatMoney;
 export const input = (name, label, type = 'text', options, extra = {}) => ({name, label, type, options, required: true, ...extra});
 export const stamp = () => new Date().toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'});
 export function Badge({children}) { return <span className="tag">{children}</span>; }
@@ -13,27 +14,37 @@ export function GridTable({headers, rows}) {
 
 export function AccountsPanel({accounts, setAccounts, setDeals, begin, role}) {
   const active = accounts.filter(a => !a.mergedInto);
-  const add = () => begin({title: '取引先を登録', confirm: true,
-    fields: [input('name', '名称'), input('type', '種別', 'select', ['個人', '法人'])],
+  const edit = row => begin({title: row ? '取引先を編集' : '取引先を登録', confirm: true,
+    text: row ? `取引先：${row.id}。同じ識別子の案件だけに名称を反映し、変更前の情報を履歴に残します。` : undefined,
+    fields: [input('name', '名称', 'text', null, {value: row?.name}), input('type', '種別', 'select', ['個人', '法人'], {value: row?.type}), ...(row ? [input('reason', '変更理由', 'textarea')] : [])],
     hint: f => {
-      const matches = f.name ? active.filter(a => a.name.includes(f.name.trim()) || f.name.trim().includes(a.name)) : [];
+      const matches = f.name ? active.filter(a => a.id !== row?.id && (a.name.includes(f.name.trim()) || f.name.trim().includes(a.name))) : [];
       return matches.length > 0 && <div className="notice"><div>似た名前の取引先があります。別の取引先であることを確認して登録してください。{matches.map(a => <p key={a.id}>{a.name} · {a.type} · {a.id}</p>)}</div></div>;
     },
-    save: f => setAccounts(xs => [...xs, {...f, name: f.name.trim(), id: 'A-' + Date.now(), at: stamp()}])
+    validate: f => !f.name.trim() ? '名称を入力してください。' : row && !f.reason.trim() ? '変更理由を入力してください。' : null,
+    save: f => {
+      const at = stamp(), updated = {id: row?.id || 'A-' + Date.now(), name: f.name.trim(), type: f.type, at};
+      if (!row) {setAccounts(xs => [...xs, updated]);return;}
+      setAccounts(xs => xs.map(a => a.id === row.id ? {...a, ...updated, history: [...(a.history || []), {before: `${a.name} / ${a.type}`, after: `${updated.name} / ${updated.type}`, reason: f.reason.trim(), actor: role, at}]} : a));
+      setDeals(xs => relinkAccounts(xs, row.id, updated, f.reason.trim(), at, role));
+    }
   });
   const merge = a => begin({title: '取引先を統合', confirm: true,
     text: `統合元：${a.name}（${a.id}）。元の識別子を保持し、案件の参照先を統合先へ付け替えます。`,
     fields: [input('target', '統合先', 'select', active.filter(x => x.id !== a.id).map(x => `${x.id} / ${x.name}`)), input('reason', '統合理由', 'textarea')],
+    validate: f => !f.reason.trim() ? '統合理由を入力してください。' : null,
     save: f => {
       const target = active.find(x => f.target.startsWith(x.id + ' /'));
       if (!target) return '統合先を選択してください。';
-      setAccounts(xs => xs.map(x => x.id === a.id ? {...x, mergedInto: target.id, reason: f.reason, at: stamp()} : x));
-      setDeals(xs => xs.map(x => (x.accountId === a.id || (!x.accountId && x.account === a.name)) ? {...x, account: target.name, accountId: target.id, originalAccountId: a.id} : x));
+      const at = stamp();
+      setAccounts(xs => xs.map(x => x.id === a.id ? {...x, mergedInto: target.id, reason: f.reason.trim(), actor: role, at} : x));
+      setDeals(xs => relinkAccounts(xs, a.id, target, f.reason.trim(), at, role));
     }, success: '取引先を統合しました。元の識別子と理由は履歴に残っています。'
   });
-  return <><Card title="取引先一覧" subtitle="同名でも別の取引先として登録できます。識別子で区別します。" action={<button className="primary" onClick={add}>取引先を登録</button>}>
-    <GridTable headers={['名称・識別子', '種別', '操作']} rows={active.map(a => [<>{a.name}<small>{a.id}</small></>, a.type, role === '総務担当' ? <button disabled={active.length < 2} onClick={() => merge(a)}>統合を確認</button> : '統合は総務担当が実行'])}/>
-  </Card><Card title="統合の履歴"><GridTable headers={['統合元', '統合先', '理由・日時']} rows={accounts.filter(a => a.mergedInto).map(a => [`${a.name} (${a.id})`, a.mergedInto, <>{a.reason}<small>{a.at}</small></>])}/></Card></>;
+  return <><Card title="取引先一覧" subtitle="同名でも別の取引先として登録できます。識別子で区別します。" action={<button className="primary" onClick={() => edit()}>取引先を登録</button>}>
+    <GridTable headers={['名称・識別子', '種別', '操作']} rows={active.map(a => [<>{a.name}<small>{a.id}</small></>, a.type, <div className="row-actions"><button onClick={() => edit(a)}>編集</button>{role === '総務担当' ? <button disabled={active.length < 2} onClick={() => merge(a)}>統合を確認</button> : <small>統合は総務担当が実行</small>}</div>])}/>
+  </Card><Card title="変更の履歴"><GridTable headers={['取引先', '変更前 → 変更後', '理由・実行者・日時']} rows={accounts.flatMap(a => (a.history || []).map(h => [a.id, `${h.before} → ${h.after}`, <>{h.reason}<small>{h.actor} · {h.at}</small></>]))}/>
+  </Card><Card title="統合の履歴"><GridTable headers={['統合元', '統合先', '理由・実行者・日時']} rows={accounts.filter(a => a.mergedInto).map(a => [`${a.name} (${a.id})`, a.mergedInto, <>{a.reason}<small>{a.actor} · {a.at}</small></>])}/></Card></>;
 }
 
 export function AccessPanel({system, access, setAccess, request, setRequest, expired, setExpired, begin, notify}) {

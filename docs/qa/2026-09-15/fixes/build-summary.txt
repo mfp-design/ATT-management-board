@@ -1,0 +1,12 @@
+dist/client/assets/noto-sans-jp-6-400-normal-Bb-Rv9Wm.woff                  63.60 kB
+dist/client/assets/noto-sans-jp-6-500-normal-DV3lee30.woff                  63.81 kB
+dist/client/assets/noto-sans-jp-6-700-normal-D6NTb44a.woff                  64.00 kB
+dist/client/assets/index-CYEdNOdO.css                                      468.68 kB │ gzip: 165.46 kB
+dist/client/assets/index-DSoVfGdm.js                                       590.38 kB │ gzip: 185.38 kB
+✓ built in 1.95s
+Prepared Sites build: dist/server/index.js and dist/.openai/hosting.json
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

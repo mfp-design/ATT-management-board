@@ -1,3 +1,4 @@
+import {validPeriod, memberMemberships, membershipError, describeOrganization} from './prototype-model.js';
 import React from 'react';
 import {Card, GridTable, Badge, input, stamp} from './workflow-panels.jsx';
 
@@ -19,17 +20,48 @@ export function UsersPanel({users, setUsers, begin}) {
 }
 
 export function OrganizationPanel({organization, setOrganization, begin, system}) {
-  const businesses = organization.businesses.filter(x => x.active).map(x => x.name);
-  const edit = (kind, row) => begin({title: `${kind === 'businesses' ? '事業' : 'メンバー'}を${row ? '編集' : '登録'}`, confirm: true,
-    fields: [input('name', '名称', 'text', null, {value: row?.name}), input('start', '開始日', 'date', null, {value: row?.start || '2026-09-11'}), input('end', '終了日', 'date', null, {value: row?.end, required: false}),
-      ...(kind === 'members' ? [input('primary', '主所属', 'select', businesses, {value: row?.primary}), input('additional', '兼務先（複数選択可）', 'multiselect', businesses, {value: row?.additional || [], required: false})] : []), ...(row ? [input('reason', '変更理由', 'textarea')] : [])],
-    validate: f => f.end && f.end < f.start ? '終了日は開始日以降にしてください。' : f.additional?.includes(f.primary) ? '主所属と兼務先は別の事業を選択してください。' : null,
-    save: f => setOrganization(x => ({...x, [kind]: row ? x[kind].map(v => v.id === row.id ? {...v, ...f, history: [...(v.history || []), {before: `${v.name} / ${v.primary || ''}`, after: `${f.name} / ${f.primary || ''}`, reason: f.reason, at: stamp()}]} : v) : [...x[kind], {...f, id: kind + Date.now(), active: true}]}))});
-  const disable = (kind, row) => begin({title: `${row.name}を無効化`, text: '新規入力の候補から除外し、過去の名称と所属は保持します。', confirm: true,
-    fields: [input('end', '終了日', 'date', null, {value: '2026-09-11'}), input('reason', '無効化理由', 'textarea')],
-    save: f => setOrganization(x => ({...x, [kind]: x[kind].map(v => v.id === row.id ? {...v, active: false, ...f} : v)}))});
+  const businessName = id => organization.businesses.find(x => x.id === id)?.name || id;
+  const store = (kind, row, values, reason) => setOrganization(current => {
+    const next = {...row, ...values};
+    const history = row ? [...(row.history || []), {
+      before: describeOrganization(row, current.businesses), after: describeOrganization(next, current.businesses),
+      reason: reason.trim(), actor: 'システム担当', at: stamp(),
+    }] : [];
+    return {...current, [kind]: row ? current[kind].map(x => x.id === row.id ? {...next, history} : x) : [...current[kind], {...values, id: kind + Date.now(), active: true, history}]};
+  });
+  const edit = (kind, row) => {
+    const names = organization.businesses.filter(x => x.active || row?.memberships?.some(m => m.businessId === x.id)).map(x => x.name);
+    const values = f => ({name: f.name.trim(), start: f.start, end: f.end || '', ...(kind === 'members' ? {memberships: memberMemberships(row, f, organization.businesses)} : {})});
+    begin({title: `${kind === 'businesses' ? '事業' : 'メンバー'}を${row ? '編集' : '登録'}`, confirm: true,
+      text: kind === 'members' ? 'メンバーの在籍期間と所属先を設定します。所属先ごとの期間は、保存後の「所属期間を変更」で個別に設定できます。' : undefined,
+      fields: [input('name', '名称', 'text', null, {value: row?.name}), input('start', '開始日', 'date', null, {value: row?.start || '2026-09-11'}), input('end', '終了日', 'date', null, {value: row?.end, required: false}),
+        ...(kind === 'members' ? [input('primary', '主所属', 'select', names, {value: row?.memberships?.filter(m => m.kind === '主所属').map(m => businessName(m.businessId))[0]}), input('additional', '兼務先（複数選択可）', 'multiselect', names, {value: row?.memberships?.filter(m => m.kind === '兼務').map(m => businessName(m.businessId)) || [], required: false})] : []), ...(row ? [input('reason', '変更理由', 'textarea')] : [])],
+      validate: f => {
+        if (!f.name.trim()) return '名称を入力してください。';
+        if (row && !f.reason.trim()) return '変更理由を入力してください。';
+        if (!validPeriod(f.start, f.end)) return '終了日は開始日以降にしてください。';
+        if (kind === 'businesses' && organization.businesses.some(x => x.id !== row?.id && x.name === f.name.trim())) return '同じ名称の事業が登録されています。';
+        return kind === 'members' ? membershipError(values(f)) : null;
+      },
+      save: f => store(kind, row, values(f), f.reason || '新規登録'),
+    });
+  };
+  const editMembership = (member, membership) => begin({title: '所属期間を変更', confirm: true,
+    text: `${member.name} / ${membership.kind}：${businessName(membership.businessId)}。在籍期間 ${member.start}〜${member.end || '終了未定'} の範囲で設定します。`,
+    fields: [input('start', '所属開始日', 'date', null, {value: membership.start}), input('end', '所属終了日', 'date', null, {value: membership.end, required: false}), input('reason', '変更理由', 'textarea')],
+    validate: f => !f.reason.trim() ? '変更理由を入力してください。' : membershipError({...member, memberships: member.memberships.map(m => m.businessId === membership.businessId ? {...m, start: f.start, end: f.end} : m)}),
+    save: f => store('members', member, {memberships: member.memberships.map(m => m.businessId === membership.businessId ? {...m, start: f.start, end: f.end || ''} : m)}, f.reason),
+  });
+  const disable = (kind, row) => {
+    const values = f => ({active: false, end: f.end, ...(kind === 'members' ? {memberships: row.memberships.map(m => ({...m, end: !m.end || m.end > f.end ? f.end : m.end}))} : {})});
+    begin({title: `${row.name}を無効化`, text: '新規入力の候補から除外し、変更前の名称・所属・期間を履歴に保持します。メンバーは未終了の所属もこの終了日で終了します。', confirm: true,
+      fields: [input('end', '終了日', 'date', null, {value: '2026-09-11'}), input('reason', '無効化理由', 'textarea')],
+      validate: f => !validPeriod(row.start, f.end) ? '終了日は開始日以降にしてください。' : !f.reason.trim() ? '無効化理由を入力してください。' : kind === 'members' ? membershipError({...row, ...values(f)}) : null,
+      save: f => store(kind, row, values(f), f.reason),
+    });
+  };
   return <>{['businesses', 'members'].map(kind => <Card key={kind} title={kind === 'businesses' ? '事業' : 'メンバー・所属'} subtitle="開始・終了日と名称・所属の履歴を保持します。" action={system && <button onClick={() => edit(kind)}>登録</button>}>
-    <GridTable headers={['名称', '有効期間・状態', '所属・履歴', '操作']} rows={organization[kind].map(row => [row.name, <>{row.start} — {row.end || ''}<small>{row.active ? '有効' : '無効'}</small></>, <>{row.primary}<small>{row.additional?.join('、')}</small>{row.history?.map((h, i) => <small key={i}>{h.before} → {h.after} · {h.reason} · {h.at}</small>)}</>, system && row.active && <div className="row-actions"><button onClick={() => edit(kind, row)}>編集</button><button onClick={() => disable(kind, row)}>無効化</button></div>])}/>
+    <GridTable headers={['名称', '有効期間・状態', '所属・履歴', '操作']} rows={organization[kind].map(row => [row.name, <>{row.start} — {row.end || '終了未定'}<small>{row.active ? '有効' : '無効'}</small></>, <div className="membership-list">{row.memberships?.map(m => <div key={m.businessId}><span>{m.kind}：{businessName(m.businessId)}</span><small>{m.start} — {m.end || '終了未定'}</small>{system && row.active && <button aria-label={`${row.name}・${businessName(m.businessId)}の所属期間を変更`} onClick={() => editMembership(row, m)}>所属期間を変更</button>}</div>)}{row.history?.length > 0 && <details><summary>変更履歴（{row.history.length}件）</summary>{row.history.map((h, i) => <div key={i}><small>変更前：{h.before}</small><small>変更後：{h.after}</small><small>理由：{h.reason} · {h.actor} · {h.at}</small></div>)}</details>}</div>, system && row.active && <div className="row-actions"><button onClick={() => edit(kind, row)}>編集</button><button onClick={() => disable(kind, row)}>無効化</button></div>])}/>
   </Card>)}</>;
 }
 

@@ -1,0 +1,181 @@
+- generic: 画面案 Phase 1 · 架空データ／再読込でリセット
+- text: 役割
+- combobox "プレビューの役割":
+  - option "経営者" [selected]
+  - option "総務担当"
+  - option "システム担当"
+- text: 状態
+- combobox "プレビューの状態":
+  - option "通常" [selected]
+  - option "空"
+  - option "読込中"
+  - option "通信エラー"
+  - option "競合"
+  - option "ログイン"
+  - option "未登録"
+  - option "無効化"
+  - option "セッション期限切れ"
+  - option "権限不足"
+  - option "運用開始前"
+  - option "照合失敗"
+  - option "連携確認待ち"
+  - option "遅着データ"
+- complementary:
+  - strong: ATT 経営管理
+  - generic: Management Board
+  - navigation "メインメニュー":
+    - button "経営ダッシュボード":
+      - text: 経営ダッシュボード
+    - button "案件":
+      - text: 案件
+    - button "売上・請求・入金":
+      - text: 売上・請求・入金
+    - button "経費":
+      - text: 経費
+    - button "月次締め":
+      - text: 月次締め
+    - button "活動・次の行動":
+      - text: 活動・次の行動
+    - button "支援記録":
+      - text: 支援記録
+    - button "全社プロジェクト":
+      - text: 全社プロジェクト
+    - button "アイデア受信箱":
+      - text: アイデア受信箱
+    - button "取引先":
+      - text: 取引先
+    - button "事業・メンバー":
+      - text: 事業・メンバー
+    - button "月次予算":
+      - text: 月次予算
+    - button "人件費":
+      - text: 人件費
+    - button "監査履歴":
+      - text: 監査履歴
+    - button "一時アクセス":
+      - text: 一時アクセス
+    - button "運用・設定":
+      - text: 運用・設定
+  - text: 経営者
+  - generic: 画面表示の確認中
+- main:
+  - paragraph: ATT / 経営者
+  - heading "経費" [level=1]
+  - button "すべて"
+  - button "対象未分類"
+  - button "分類済み"
+  - button "見直し候補"
+  - button "連携確認待ち"
+  - button "手入力経費"
+  - generic: 利用先・事業・利用者で検索
+  - textbox "利用先・事業・利用者で検索"
+  - heading "経費明細" [level=2]
+  - paragraph: 利用日で集計。未分類も全社経費に含めます。
+  - table:
+    - rowgroup:
+      - row "利用日・利用先 利用者 税込金額 対象事業 状態 操作":
+        - columnheader "利用日・利用先"
+        - columnheader "利用者"
+        - columnheader "税込金額"
+        - columnheader "対象事業"
+        - columnheader "状態"
+        - columnheader "操作"
+    - rowgroup:
+      - row "2026-09-08 サンプル貸会議室 UPSIDER 担当A ¥8,800 日本デザイン 回答者：経営者 分類済み 回答を修正 詳細・見直し":
+        - cell "2026-09-08 サンプル貸会議室 UPSIDER":
+          - text: 2026-09-08
+          - strong: サンプル貸会議室
+          - generic: UPSIDER
+        - cell "担当A"
+        - cell "¥8,800"
+        - cell "日本デザイン 回答者：経営者":
+          - text: 日本デザイン
+          - generic: 回答者：経営者
+        - cell "分類済み":
+          - generic: 分類済み
+        - cell "回答を修正 詳細・見直し":
+          - button "回答を修正"
+          - button "詳細・見直し"
+      - row "2026-09-09 サンプル交通 UPSIDER 担当B ¥2,640 未回答 対象未分類 事業を選択 詳細・見直し":
+        - cell "2026-09-09 サンプル交通 UPSIDER":
+          - text: 2026-09-09
+          - strong: サンプル交通
+          - generic: UPSIDER
+        - cell "担当B"
+        - cell "¥2,640"
+        - cell "未回答"
+        - cell "対象未分類":
+          - generic: 対象未分類
+        - cell "事業を選択 詳細・見直し":
+          - button "事業を選択"
+          - button "詳細・見直し"
+      - row "2026-09-06 サンプル広告サービス UPSIDER 担当A ¥36,000 FP事業 分類済み 回答を修正 詳細・見直し":
+        - cell "2026-09-06 サンプル広告サービス UPSIDER":
+          - text: 2026-09-06
+          - strong: サンプル広告サービス
+          - generic: UPSIDER
+        - cell "担当A"
+        - cell "¥36,000"
+        - cell "FP事業"
+        - cell "分類済み":
+          - generic: 分類済み
+        - cell "回答を修正 詳細・見直し":
+          - button "回答を修正"
+          - button "詳細・見直し"
+      - row "2026-09-10 サンプル備品 手入力 会社 ¥12,800 全社共通 分類済み 回答を修正 詳細・見直し 返金・訂正":
+        - cell "2026-09-10 サンプル備品 手入力":
+          - text: 2026-09-10
+          - strong: サンプル備品
+          - generic: 手入力
+        - cell "会社"
+        - cell "¥12,800"
+        - cell "全社共通"
+        - cell "分類済み":
+          - generic: 分類済み
+        - cell "回答を修正 詳細・見直し 返金・訂正":
+          - button "回答を修正"
+          - button "詳細・見直し"
+          - button "返金・訂正"
+      - row "2026-09-18 サンプル会場 手入力 担当B ¥48,000 MoneRun 分類済み 回答を修正 詳細・見直し 返金・訂正":
+        - cell "2026-09-18 サンプル会場 手入力":
+          - text: 2026-09-18
+          - strong: サンプル会場
+          - generic: 手入力
+        - cell "担当B"
+        - cell "¥48,000"
+        - cell "MoneRun"
+        - cell "分類済み":
+          - generic: 分類済み
+        - cell "回答を修正 詳細・見直し 返金・訂正":
+          - button "回答を修正"
+          - button "詳細・見直し"
+          - button "返金・訂正"
+  - paragraph: 未回答経費は毎月1・11・21日10:00に元のSlackスレッドで1件ずつ再通知します。
+  - generic: AT THE TOP · Management Board
+  - generic: 表示金額は税込・日本円
+- dialog "経費の分類を修正":
+  - banner:
+    - paragraph: 内容の確認
+    - heading "経費の分類を修正" [level=2]
+    - button "閉じる" [active]:
+  - paragraph: 2026-09-08 · サンプル貸会議室 · ¥8,800 · 担当A
+  - text: 対象事業
+  - generic: 必須
+  - combobox "対象事業 必須":
+    - option "選択してください"
+    - option "FP事業"
+    - option "MoneRun"
+    - option "Agerun"
+    - option "自社不動産事業"
+    - option "日本デザイン" [selected]
+    - option "日本酒"
+    - option "トラストサロン"
+    - option "ビルメンテナンス"
+    - option "企業研修"
+    - option "全社共通"
+  - text: 修正理由
+  - generic: 必須
+  - textbox "修正理由 必須"
+  - contentinfo:
+    - button "キャンセル"
+    - button "内容を確認"

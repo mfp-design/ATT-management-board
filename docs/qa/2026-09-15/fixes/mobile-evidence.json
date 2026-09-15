@@ -1,0 +1,35 @@
+{
+  "support320": {
+    "button": [
+      {
+        "rect": {
+          "height": 40,
+          "width": 90
+        },
+        "text": "記録する",
+        "whiteSpace": "nowrap"
+      }
+    ],
+    "scrollWidth": 320,
+    "width": 320
+  },
+  "membership320": {
+    "dialogs": [
+      {
+        "height": 589.6875,
+        "scrollWidth": 284,
+        "width": 286
+      }
+    ],
+    "height": 740,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  "membership390": {
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "dialogWidth": 356
+  },
+  "result": "PASS: button nowrap; membership dialog readable and cancel works; missing support target rejected; no completed support save in this rerun"
+}

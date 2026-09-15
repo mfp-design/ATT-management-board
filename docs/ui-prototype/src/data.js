@@ -1,15 +1,15 @@
-export const businesses = ['FP事業','MoneRun','Agerun','自社不動産事業','日本酒','トラストサロン','ビルメンテナンス','企業研修'];
+export const businesses = ['FP事業','MoneRun','Agerun','自社不動産事業','日本デザイン','日本酒','トラストサロン','ビルメンテナンス','企業研修'];
 export const members = ['担当A','担当B','担当C'];
 export const stages = ['見込み','アプローチ','提案','商談中','成約','失注'];
 export const seedDeals = [
- {id:'D-001',name:'ライフプラン継続支援',account:'サンプル商事',business:'FP事業',member:'担当A',stage:'商談中',amount:360000,due:'2026-09-25',revenueDate:'2026-09-30'},
- {id:'D-002',name:'ランニング講座 第2期',account:'サンプル企画',business:'MoneRun',member:'担当B',stage:'提案',amount:180000,due:'2026-09-18',revenueDate:'2026-09-28'},
- {id:'D-003',name:'管理職研修 秋季プログラム',account:'サンプル工業',business:'企業研修',member:'担当C',stage:'成約',amount:420000,due:'2026-09-05',revenueDate:'2026-09-10'},
- {id:'D-004',name:'物件活用コンサルティング',account:'サンプル不動産',business:'自社不動産事業',member:'担当A',stage:'アプローチ',amount:240000,due:'2026-09-27',revenueDate:'2026-09-30'}
+ {id:'D-001',name:'ライフプラン継続支援',accountId:'A-001',account:'サンプル商事',business:'FP事業',member:'担当A',stage:'商談中',amount:360000,due:'2026-09-25',revenueDate:'2026-09-30'},
+ {id:'D-002',name:'ランニング講座 第2期',accountId:'A-002',account:'サンプル企画',business:'MoneRun',member:'担当B',stage:'提案',amount:180000,due:'2026-09-18',revenueDate:'2026-09-28'},
+ {id:'D-003',name:'管理職研修 秋季プログラム',accountId:'A-003',account:'サンプル工業',business:'企業研修',member:'担当C',stage:'成約',amount:420000,due:'2026-09-05',revenueDate:'2026-09-10'},
+ {id:'D-004',name:'物件活用コンサルティング',accountId:'A-004',account:'サンプル不動産',business:'自社不動産事業',member:'担当A',stage:'アプローチ',amount:240000,due:'2026-09-27',revenueDate:'2026-09-30'}
 ];
 seedDeals.push(
- {id:'D-005',name:'保険相談 継続サポート',account:'サンプル商事',business:'FP事業',member:'担当A',stage:'成約',amount:280000,due:'2026-09-02',revenueDate:'2026-09-04'},
- {id:'D-006',name:'秋季イベント運営',account:'サンプル企画',business:'MoneRun',member:'担当B',stage:'成約',amount:220000,due:'2026-09-08',revenueDate:'2026-09-22'}
+ {id:'D-005',name:'保険相談 継続サポート',accountId:'A-001',account:'サンプル商事',business:'FP事業',member:'担当A',stage:'成約',amount:280000,due:'2026-09-02',revenueDate:'2026-09-04'},
+ {id:'D-006',name:'秋季イベント運営',accountId:'A-002',account:'サンプル企画',business:'MoneRun',member:'担当B',stage:'成約',amount:220000,due:'2026-09-08',revenueDate:'2026-09-22'}
 );
 export const seedRevenue = [
  {id:'R-001',deal:'D-003',name:'管理職研修 秋季プログラム',business:'企業研修',member:'担当C',amount:420000,date:'2026-09-10',booked:true,invoiced:420000,paid:0,invoiceDate:'2026-09-10',paidDate:'',mode:'一括'},
@@ -47,7 +47,7 @@ export const screenCatalog = [
  ['support','支援記録','7.2','経営者のみ','事業／メンバー・関連案件／活動・コメント・追記訂正'],
  ['projects','全社プロジェクト','7.10','経営者・総務（予算・完了／中止を制限）','一覧・進捗・期限・責任者・成果・課題・税込予算'],
  ['ideas','アイデア受信箱','7.11','経営者・総務（採否を制限）','アイデアメモ・出所・関連事業・状態・投稿者／日時'],
- ['accounts','取引先','7.2','経営者・総務','名称・個人／法人、類似候補・統合確認・履歴'],
+ ['accounts','取引先','7.2','経営者・総務','名称・個人／法人、理由付き編集・類似候補・統合確認・履歴'],
  ['organization','事業・メンバー','8.1','システム担当：管理／業務利用者：参照','有効期間・主所属・兼務・所属履歴・無効化'],
  ['budgets','月次予算','7.5','経営者のみ','事業別売上・事業経費・全社共通費・人件費、変更履歴・締め後制御'],
  ['payroll','人件費','7.5','経営者のみ','月・全社集計額、個人別給与を保持しない'],

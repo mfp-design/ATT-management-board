@@ -1,0 +1,13 @@
+f59474e2453778c774ca250ec3a3c403b8f9d7e5a41f9668e3a9b3338ab79490  docs/ui-prototype/src/App.jsx
+2dc85ad228cfac5687d7e0b5c19b97570f85e14273250c3f7fe10fe38ebbd0d3  docs/ui-prototype/src/admin-panels.jsx
+73c24519e5f7508042ff6f5633d686e1fbd7628584dc85466559f098a07f1376  docs/ui-prototype/src/data.js
+6f51d72194b80fd7c8c918912539304761931f545b2e917afd0c373387bda46f  docs/ui-prototype/src/deals-panel.jsx
+65304c1d1679d896b24cbd6a64988a4df7a5e0c6ea391e2b8d1300e632bc1322  docs/ui-prototype/src/expense-panel.jsx
+eb810cc9a83e0b2f81181ee8756d88854fd78f1610548556c60776f172363d0f  docs/ui-prototype/src/finance-panel.jsx
+832f752c6b6a454a26dbc4f2654f5bd633f2b103516c8c0abac648308c133a7e  docs/ui-prototype/src/main.jsx
+b9cda979363335a4992d6a52106250cf0fa60b154beb53ad40fe4b39979f6883  docs/ui-prototype/src/projects-panel.jsx
+2626fe9af8f5022b34869d0bc57d04b2ab353cd9900c4f42a86c3b60ee27e4a2  docs/ui-prototype/src/prototype-model.js
+ac7bb3e76545a0f5654a27cde7b074819cbf6365f694c31715c4e09b5a100500  docs/ui-prototype/src/revenue-panel.jsx
+062a38cdcf2f1bb784097f689e8012521034b6feeec04978166625f04b5dae41  docs/ui-prototype/src/styles.css
+077edf3d81dc13c3c96599fdd0c9e873301944695177c9d68cc517d253724127  docs/ui-prototype/src/workflow-panels.jsx
+4ec419cd2dd2af3f329c98937089d4d564d31741681610897dc6638efa9af9a0  docs/ui-prototype/tests/qa-regressions.test.mjs

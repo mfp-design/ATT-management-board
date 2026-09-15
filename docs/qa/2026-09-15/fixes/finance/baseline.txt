@@ -1,0 +1,269 @@
+- generic: 画面案 Phase 1 · 架空データ／再読込でリセット
+- text: 役割
+- combobox "プレビューの役割":
+  - option "経営者" [selected]
+  - option "総務担当"
+  - option "システム担当"
+- text: 状態
+- combobox "プレビューの状態":
+  - option "通常" [selected]
+  - option "空"
+  - option "読込中"
+  - option "通信エラー"
+  - option "競合"
+  - option "ログイン"
+  - option "未登録"
+  - option "無効化"
+  - option "セッション期限切れ"
+  - option "権限不足"
+  - option "運用開始前"
+  - option "照合失敗"
+  - option "連携確認待ち"
+  - option "遅着データ"
+- complementary:
+  - strong: ATT 経営管理
+  - generic: Management Board
+  - navigation "メインメニュー":
+    - button "経営ダッシュボード":
+      - text: 経営ダッシュボード
+    - button "案件":
+      - text: 案件
+    - button "売上・請求・入金":
+      - text: 売上・請求・入金
+    - button "経費":
+      - text: 経費
+    - button "月次締め":
+      - text: 月次締め
+    - button "活動・次の行動":
+      - text: 活動・次の行動
+    - button "支援記録":
+      - text: 支援記録
+    - button "全社プロジェクト":
+      - text: 全社プロジェクト
+    - button "アイデア受信箱":
+      - text: アイデア受信箱
+    - button "取引先":
+      - text: 取引先
+    - button "事業・メンバー":
+      - text: 事業・メンバー
+    - button "月次予算":
+      - text: 月次予算
+    - button "人件費":
+      - text: 人件費
+    - button "監査履歴":
+      - text: 監査履歴
+    - button "一時アクセス":
+      - text: 一時アクセス
+    - button "運用・設定":
+      - text: 運用・設定
+  - text: 経営者
+  - generic: 画面表示の確認中
+- main:
+  - paragraph: ATT / 経営者
+  - heading "経営ダッシュボード" [level=1]
+  - button "CSV":
+    - text: CSV
+  - button "印刷":
+    - text: 印刷
+  - generic "分析期間":
+    - button "10日毎"
+    - button "1か月" [pressed]
+    - button "3か月"
+    - button "6か月"
+    - button "1年"
+  - generic: 対象月
+  - textbox "対象月": 2026-09
+  - paragraph:
+    - text: 2026/09/01 — 2026/09/30
+    - generic: 比較：2026/08/01 — 2026/08/31
+  - generic: 事業
+  - combobox "事業で絞り込み":
+    - option "すべての事業" [selected]
+    - option "FP事業"
+    - option "MoneRun"
+    - option "Agerun"
+    - option "自社不動産事業"
+    - option "日本デザイン"
+    - option "日本酒"
+    - option "トラストサロン"
+    - option "ビルメンテナンス"
+    - option "企業研修"
+  - generic: 担当者
+  - combobox "担当者で絞り込み":
+    - option "すべての担当" [selected]
+    - option "担当A"
+    - option "担当B"
+    - option "担当C"
+  - generic: 案件段階
+  - combobox "案件段階で絞り込み":
+    - option "すべての段階" [selected]
+    - option "見込み"
+    - option "アプローチ"
+    - option "提案"
+    - option "商談中"
+    - option "成約"
+    - option "失注"
+  - button "条件をクリア"
+  - paragraph: 売上計上額
+  - strong: ¥700,000
+  - generic: 計上実績日の合計
+  - paragraph: 売上着地見込み
+  - strong: ¥1,700,000
+  - generic: 確定分 ¥920,000 / 未確定分 ¥780,000
+  - paragraph: 経費総額
+  - strong: ¥108,240
+  - generic: 利用日の実績 · 人件費を除く · 未分類を含む
+  - paragraph: 全社利益
+  - strong: ¥341,760
+  - generic: 経費・全社人件費を控除
+  - heading "売上の着地見込み" [level=2]
+  - paragraph: 選択期間の事業別内訳
+  - generic: 税込
+  - 'img "着地見込み。企業研修: 確定分¥420,000、未確定分¥0。FP事業: 確定分¥280,000、未確定分¥360,000。MoneRun: 確定分¥220,000、未確定分¥180,000。自社不動産事業: 確定分¥0、未確定分¥240,000"'
+  - generic: 確定分 ¥920,000
+  - generic: 未確定分 ¥780,000
+  - paragraph: 確定分＝計上済み＋成約済みの未計上予定。未確定分は全件成約した場合の金額です。
+  - heading "確認すること" [level=2]
+  - paragraph: 未完了の入力と次の行動
+  - button "経費の対象事業 未分類 2件":
+    - strong: 経費の対象事業
+    - generic: 未分類 2件
+  - button "請求・入金の確認 入金待ち ¥420,000":
+    - strong: 請求・入金の確認
+    - generic: 入金待ち ¥420,000
+  - button "次の行動を確認 期限超過 1件":
+    - strong: 次の行動を確認
+    - generic: 期限超過 1件
+  - text: 9月の月次締め
+  - generic: 未締め
+  - paragraph: 目標：2026/10/10
+  - button "締め状況を見る":
+    - text: 締め状況を見る
+  - heading "対象期間の予算と経費の内訳" [level=2]
+  - paragraph: 架空の月次予算・人件費
+  - text: 売上予算
+  - strong: ¥1,500,000
+  - text: 経費予算
+  - strong: ¥300,000
+  - text: 全社人件費
+  - strong: ¥250,000
+  - text: 売上の予算差
+  - strong: ¥-800,000
+  - text: 全社共通費
+  - strong: ¥12,800
+  - heading "期間の比較と残高" [level=2]
+  - paragraph: 未請求・未入金は表示期間末までの累積残高です。
+  - table:
+    - rowgroup:
+      - row "指標 選択期間 比較期間・差額":
+        - columnheader "指標"
+        - columnheader "選択期間"
+        - columnheader "比較期間・差額"
+    - rowgroup:
+      - row "売上計上額 ¥700,000 比較期間の実績データなし":
+        - cell "売上計上額"
+        - cell "¥700,000"
+        - cell "比較期間の実績データなし"
+      - row "全件成約時見込み（未確定分） ¥780,000 成約確率による重み付けなし":
+        - cell "全件成約時見込み（未確定分）"
+        - cell "¥780,000"
+        - cell "成約確率による重み付けなし"
+      - row "未請求額 ¥0 期間末までの売上実績 − 請求実績":
+        - cell "未請求額"
+        - cell "¥0"
+        - cell "期間末までの売上実績 − 請求実績"
+      - row "未入金額 ¥420,000 期間末までの請求実績 − 入金実績":
+        - cell "未入金額"
+        - cell "¥420,000"
+        - cell "期間末までの請求実績 − 入金実績"
+      - row "見直し候補の経費 ¥0 明細を見る":
+        - cell "見直し候補の経費"
+        - cell "¥0"
+        - cell "明細を見る":
+          - button "明細を見る"
+  - heading "期間内の案件変更" [level=2]
+  - paragraph: 画面案で行った変更を表示。過去時点の復元は本実装で検証します。
+  - table:
+    - rowgroup:
+      - row "案件 変更前 → 変更後 理由":
+        - columnheader "案件"
+        - columnheader "変更前 → 変更後"
+        - columnheader "理由"
+    - rowgroup
+  - heading "該当するデータがありません" [level=3]
+  - paragraph: 検索語や絞り込み条件を変更してください。
+  - heading "案件の状況" [level=2]
+  - paragraph: 2026年9月の案件サンプル
+  - button "案件一覧":
+    - text: 案件一覧
+  - table:
+    - rowgroup:
+      - row "案件 事業・担当 段階 金額":
+        - columnheader "案件"
+        - columnheader "事業・担当"
+        - columnheader "段階"
+        - columnheader "金額"
+    - rowgroup:
+      - row "ライフプラン継続支援 FP事業 担当A 商談中 ¥360,000":
+        - cell "ライフプラン継続支援":
+          - button "ライフプラン継続支援"
+        - cell "FP事業 担当A":
+          - text: FP事業
+          - generic: 担当A
+        - cell "商談中":
+          - generic: 商談中
+        - cell "¥360,000"
+      - row "ランニング講座 第2期 MoneRun 担当B 提案 ¥180,000":
+        - cell "ランニング講座 第2期":
+          - button "ランニング講座 第2期"
+        - cell "MoneRun 担当B":
+          - text: MoneRun
+          - generic: 担当B
+        - cell "提案":
+          - generic: 提案
+        - cell "¥180,000"
+      - row "管理職研修 秋季プログラム 企業研修 担当C 成約 ¥420,000":
+        - cell "管理職研修 秋季プログラム":
+          - button "管理職研修 秋季プログラム"
+        - cell "企業研修 担当C":
+          - text: 企業研修
+          - generic: 担当C
+        - cell "成約":
+          - generic: 成約
+        - cell "¥420,000"
+      - row "物件活用コンサルティング 自社不動産事業 担当A アプローチ ¥240,000":
+        - cell "物件活用コンサルティング":
+          - button "物件活用コンサルティング"
+        - cell "自社不動産事業 担当A":
+          - text: 自社不動産事業
+          - generic: 担当A
+        - cell "アプローチ":
+          - generic: アプローチ
+        - cell "¥240,000"
+      - row "保険相談 継続サポート FP事業 担当A 成約 ¥280,000":
+        - cell "保険相談 継続サポート":
+          - button "保険相談 継続サポート"
+        - cell "FP事業 担当A":
+          - text: FP事業
+          - generic: 担当A
+        - cell "成約":
+          - generic: 成約
+        - cell "¥280,000"
+      - row "秋季イベント運営 MoneRun 担当B 成約 ¥220,000":
+        - cell "秋季イベント運営":
+          - button "秋季イベント運営"
+        - cell "MoneRun 担当B":
+          - text: MoneRun
+          - generic: 担当B
+        - cell "成約":
+          - generic: 成約
+        - cell "¥220,000"
+  - heading "支援記録" [level=2]
+  - paragraph: 経営者だけに共有するコメント
+  - button "コメント":
+    - text: コメント
+  - article:
+    - paragraph: 次回の相談では、継続支援の内容を具体化。必要なら提案前に一緒に確認したい。
+    - generic: FP事業 · 担当A · 経営者（サンプル） · 2026/09/10 16:30
+  - generic: AT THE TOP · Management Board
+  - generic: 表示金額は税込・日本円
