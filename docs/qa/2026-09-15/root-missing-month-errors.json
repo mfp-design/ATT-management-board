@@ -1,0 +1,8 @@
+[
+  {
+    "level": "error",
+    "message": "TypeError: Cannot read properties of undefined (reading 'sales')\n    at http://127.0.0.1:4176/src/finance-panel.jsx:48:223\n    at Array.flatMap (<anonymous>)\n    at FinancePanel (http://127.0.0.1:4176/src/finance-panel.jsx:48:173)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:4176/node_modules/.vite/deps/react-dom_client.js?v=7360c8e2:18509:20)\n    at renderWithHooks (http://127.0.0.1:4176/node_modules/.vite/deps/react-dom_client.js?v=7360c8e2:5654:24)\n    at updateFunctionComponent (http://127.0.0.1:4176/node_modules/.vite/deps/react-dom_client.js?v=7360c8e2:7475:21)\n    at beginWork (http://127.0.0.1:4176/node_modules/.vite/deps/react-dom_client.js?v=7360c8e2:8525:20)\n    at runWithFiberInDEV (http://127.0.0.1:4176/node_modules/.vite/deps/react-dom_client.js?v=7360c8e2:997:72)\n    at performUnitOfWork (http://127.0.0.1:4176/node_modules/.vite/deps/react-dom_client.js?v=7360c8e2:12561:98)\n    at workLoopSync (http://127.0.0.1:4176/node_modules/.vite/deps/react-dom_client.js?v=7360c8e2:12424:43)",
+    "timestamp": "2026-09-15T11:44:44.914Z",
+    "url": "http://127.0.0.1:4176/src/finance-panel.jsx"
+  }
+]
