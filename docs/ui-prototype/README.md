@@ -11,6 +11,7 @@
 上部の「役割」で経営者・総務担当・システム担当を切り替え、「状態」でエラー・競合・ログイン等を試せます。すべて架空データで、変更はブラウザー内だけに保持され、再読み込みで初期値に戻ります。通常の確認は2026年9月のサンプルで始めてください。
 
 - 操作する順番と期待結果: [review-guide.md](review-guide.md)
+- 利用者が確認する項目と結果記録: [画面確認チェックリスト](../user-verification.md)（#6〜#13共通。画面案の既知の未反映事項も記載）
 - 画面・役割・主要状態の対応: [screen-inventory.md](screen-inventory.md)
 - 表示・操作の確認結果と制限: [design-qa.md](design-qa.md)
 - 保存画像: [PC](evidence/pc-dashboard-final.png)、[スマートフォン](evidence/mobile-dashboard-final.png)、[支援コメント入力](evidence/mobile-support-form.png)、[一時アクセス承認](evidence/mobile-access-approval.png)
