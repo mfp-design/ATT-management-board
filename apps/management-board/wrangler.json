@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "att-management-board-local",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-15",
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": { "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": true },
+  "vars": { "APP_ENV": "local", "APP_INSTANCE": "att-management-board-local", "SYSTEM_EMAIL": "info@mfp-design.jp" },
+  "d1_databases": [{ "binding": "DB", "database_name": "att-management-board-local-db", "database_id": "00000000-0000-0000-0000-000000000014", "remote": false }]
+}

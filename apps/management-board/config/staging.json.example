@@ -1,0 +1,10 @@
+{
+  "name": "att-management-board-staging",
+  "main": "../worker/index.ts",
+  "compatibility_date": "2026-09-15",
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": { "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": true },
+  "vars": { "APP_ENV": "staging", "APP_INSTANCE": "att-management-board-staging", "SYSTEM_EMAIL": "info@mfp-design.jp" },
+  "d1_databases": [{ "binding": "DB", "database_name": "att-management-board-staging-db", "database_id": "REPLACE_WITH_STAGING_D1_ID" }]
+}
